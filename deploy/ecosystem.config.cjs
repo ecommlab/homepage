@@ -2,7 +2,9 @@
  * pm2-Konfiguration für die ecommlab Homepage (CloudPanel Site-User).
  *
  * Beschreibt AUSSCHLIESSLICH die App "ecommlab-prod". Pfade werden aus
- * dem Ort dieser Datei abgeleitet (CloudPanel: /home/ecomde/htdocs/ecommlab.de).
+ * dem Ort dieser Datei abgeleitet. Gestartet wird über den Symlink
+ * /home/ecomde/htdocs/ecommlab.de/current; Node löst __dirname real auf,
+ * cwd ist also das konkrete Release unter releases/<timestamp>-<sha>.
  */
 
 const path = require('node:path')

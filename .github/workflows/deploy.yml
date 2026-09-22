@@ -5,7 +5,7 @@
 #   · Actions-Tab → Run     → Ziel manuell wählbar (ecommlab-cloud | gcloud)
 #
 # Ziel "ecommlab-cloud": 91.98.93.10 (CloudPanel), Site unter User "ecomde"
-# (/home/ecomde/htdocs/ecommlab.de). nginx proxied ecommlab.de und ecommlab.io
+# (/home/ecomde/htdocs/ecommlab.de, Releases + Symlink current). nginx proxied ecommlab.de und ecommlab.io
 # auf 127.0.0.1:3000. Deploy läuft ALS dieser User.
 #
 # Benötigte Repository-Secrets (identisch zu mydev.ai):
@@ -110,7 +110,8 @@ jobs:
           {
             echo "### ✅ Deploy auf ecommlab-cloud"
             echo "- App: \`ecommlab-prod\` (pm2 User ecomde), Port 3000"
-            echo "- Path: \`/home/ecomde/htdocs/ecommlab.de\`"
+            echo "- Path: \`/home/ecomde/htdocs/ecommlab.de/current\` (Release: \`${GITHUB_SHA::12}\`)"
+            echo "- Rollback: \`./scripts/deploy.sh rollback\`"
             echo "- Host: \`91.98.93.10\`"
           } >> "$GITHUB_STEP_SUMMARY"
 

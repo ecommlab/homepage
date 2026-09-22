@@ -16,6 +16,35 @@ Lokal:
 ./scripts/deploy.sh ecomde@91.98.93.10
 ```
 
+### Ablauf (Release-basiert)
+
+```
+/home/ecomde/htdocs/ecommlab.de/
+├── releases/<timestamp>-<sha>/   ein vollständiger Build pro Deploy
+├── shared/.env.production        in jedes Release verlinkt (nicht im Repo)
+└── current -> releases/<…>       aktives Release, pm2 startet von hier
+```
+
+1. Sync in ein **neues** Release (`rsync --link-dest` auf das aktive → nur Änderungen werden übertragen). Alle `.env*` aus dem Repo sind ausgeschlossen.
+2. `npm ci` + `next build` im neuen Release — Live läuft unverändert weiter.
+3. Smoke-Test: neues Release kurz auf `127.0.0.1:3100` starten, HTTP 200 erwartet (`SMOKE_PORT` überschreibbar).
+4. `current` atomar umschalten, pm2 neu starten, Healthcheck auf Port 3000.
+5. Healthcheck rot → automatischer Rollback auf das vorherige Release.
+6. Alte Releases aufräumen (`KEEP_RELEASES`, Default 5).
+
+Schlägt 2. oder 3. fehl, wird das halbfertige Release gelöscht; Live bleibt unberührt.
+
+**Rollback** (manuell, auf das vorherige Release):
+
+```bash
+./scripts/deploy.sh rollback ecomde@91.98.93.10
+```
+
+**Migration:** Beim ersten Deploy wird `ecommlab.de/.env.production` nach
+`shared/.env.production` kopiert. Der alte Code im Site-Root wird danach nicht
+mehr genutzt und kann manuell entfernt werden (`releases/`, `shared/`,
+`current` behalten).
+
 ### Repository-Secrets (identisch zu mydev.ai)
 
 | Secret | Inhalt |
