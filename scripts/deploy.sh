@@ -7,7 +7,9 @@
 #
 # Layout auf dem Server (BASE = /home/ecomde/htdocs/ecommlab.de):
 #   BASE/releases/<timestamp>-<sha>/   je Deploy ein vollständiger Build
-#   BASE/shared/.env.production        Runtime-/Build-Env, in jedes Release verlinkt
+#   BASE/shared/.env.production        Runtime-/Build-Env, wird in jedes Release kopiert
+#                                      (kein Symlink: next build bündelt sonst die Datei
+#                                      außerhalb des Projekts und bricht ab)
 #   BASE/current -> releases/<…>       aktives Release (pm2 läuft von hier)
 #
 # Ablauf: Sync in neues Release → npm ci + next build → Smoke-Test auf
@@ -119,7 +121,7 @@ rsh "test -f '${SHARED}/.env.production'" || die "${SHARED}/.env.production fehl
 ok "shared/.env.production vorhanden"
 
 step "Übertrage Quellcode → releases/${REL}"
-PREV_REAL=$(rsh "readlink -f '${CURRENT}' 2>/dev/null || true")
+PREV_REAL=$(rsh "[ -d '${CURRENT}' ] && readlink -f '${CURRENT}' || true")
 LINK_DEST=()
 [ -n "$PREV_REAL" ] && LINK_DEST=(--link-dest="$PREV_REAL")   # unveränderte Dateien als Hardlink
 rsync -az ${LINK_DEST[@]+"${LINK_DEST[@]}"} \
@@ -134,7 +136,7 @@ rsync -az ${LINK_DEST[@]+"${LINK_DEST[@]}"} \
   --exclude '*.log' \
   --exclude 'docs/' \
   ./ "${HOST}:${RELEASES}/${REL}/"
-rsh "ln -sfn '${SHARED}/.env.production' '${RELEASES}/${REL}/.env.production'"
+rsh "cp -p '${SHARED}/.env.production' '${RELEASES}/${REL}/.env.production'"
 ok "Dateien synchronisiert (keine .env* aus dem Repo)"
 
 # Ab hier: bei Fehlern das halbfertige Release entfernen, Live bleibt unberührt.

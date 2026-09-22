@@ -21,7 +21,7 @@ Lokal:
 ```
 /home/ecomde/htdocs/ecommlab.de/
 ├── releases/<timestamp>-<sha>/   ein vollständiger Build pro Deploy
-├── shared/.env.production        in jedes Release verlinkt (nicht im Repo)
+├── shared/.env.production        wird in jedes Release kopiert (nicht im Repo)
 └── current -> releases/<…>       aktives Release, pm2 startet von hier
 ```
 
@@ -44,6 +44,10 @@ Schlägt 2. oder 3. fehl, wird das halbfertige Release gelöscht; Live bleibt un
 `shared/.env.production` kopiert. Der alte Code im Site-Root wird danach nicht
 mehr genutzt und kann manuell entfernt werden (`releases/`, `shared/`,
 `current` behalten).
+
+> Der Symlink-Ansatz für `.env.production` funktioniert nicht: `next build`
+> nimmt die Env-Datei in den Webpack-Graph auf und bricht bei einem Ziel
+> außerhalb des Projektordners mit *Module parse failed* ab.
 
 ### Repository-Secrets (identisch zu mydev.ai)
 
