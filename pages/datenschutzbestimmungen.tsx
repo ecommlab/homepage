@@ -26,7 +26,7 @@ export default function Datenschutzbestimmungen() {
   return (
     <>
       <Head>
-        <title>{tr(locale, 'Datenschutzbestimmungen', 'Privacy policy')} – Ecommlab</title>
+        <title>{`${tr(locale, 'Datenschutzbestimmungen', 'Privacy policy')} – Ecommlab`}</title>
         <meta
           name="description"
           content="Datenschutzbestimmungen der Ecommlab GmbH – Informationen zur Verarbeitung personenbezogener Daten."

@@ -15,7 +15,7 @@ export default function JobDetail({ slug }: { slug: string }) {
   return (
     <>
       <Head>
-        <title>{job.title[locale]} – Ecommlab</title>
+        <title>{`${job.title[locale]} – Ecommlab`}</title>
         <meta
           name="description"
           content={tr(locale, `${job.title.de} – Komm in unser Team.`, `${job.title.en} – Join our team.`)}

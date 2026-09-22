@@ -20,7 +20,7 @@ export default function Kontakt() {
   return (
     <>
       <Head>
-        <title>{tr(locale, 'Kontakt', 'Contact')} – Ecommlab</title>
+        <title>{`${tr(locale, 'Kontakt', 'Contact')} – Ecommlab`}</title>
         <meta
           name="description"
           content={tr(

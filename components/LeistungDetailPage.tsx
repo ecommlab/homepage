@@ -14,7 +14,7 @@ export function LeistungDetailPage({ leistung }: { leistung: LeistungDetail }) {
   return (
     <>
       <Head>
-        <title>{leistung.title[locale]} – Ecommlab</title>
+        <title>{`${leistung.title[locale]} – Ecommlab`}</title>
         <meta name="description" content={leistung.intro[locale]} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />

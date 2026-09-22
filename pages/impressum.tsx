@@ -12,7 +12,7 @@ export default function Impressum() {
   return (
     <>
       <Head>
-        <title>{tr(locale, 'Impressum', 'Legal notice')} – Ecommlab</title>
+        <title>{`${tr(locale, 'Impressum', 'Legal notice')} – Ecommlab`}</title>
         <meta name="description" content={tr(locale, 'Impressum der Ecommlab GmbH.', 'Legal notice of Ecommlab GmbH.')} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
