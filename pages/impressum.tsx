@@ -37,7 +37,7 @@ export default function Impressum() {
                     Ecommlab GmbH
                   </h2>
                   <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                    Klothildenstraße 27
+                    Turnerstraße 15
                     <br />
                     81827 München, Deutschland
                   </p>
