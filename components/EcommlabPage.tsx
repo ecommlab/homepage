@@ -43,6 +43,8 @@ const PROJEKTE = [
 
 /** Partner-Logos: ORIGINAL-Dateien aus public/partners (unverändert), Reihenfolge wie im Board. */
 const PARTNER_NAMEN = ['Shopify', 'PayPal', 'Cloudflare', 'Magento', 'Shopware'] as const
+/** Mobile Bildhöhe je Logo, damit die Zeichen trotz unterschiedlichem Leerraum in der SVG gleich groß wirken. */
+const PARTNER_MOBIL_HOEHE = ['max-h-[29px]', 'max-h-[32px]', 'max-h-[32px]', 'max-h-[29px]', 'max-h-[32px]'] as const
 
 /* ---------- kleine Bausteine ---------- */
 
@@ -236,15 +238,15 @@ export function EcommlabPage() {
               <p className="m-0 text-[14px] font-semibold leading-[1.3] lg:col-span-2 lg:leading-none" style={{ color: 'var(--c2-muted)' }}>
                 {t.partner.titel}
               </p>
-              <ul className="m-0 mt-[20px] grid list-none grid-cols-2 gap-x-[16px] gap-y-[20px] p-0 lg:col-span-10 lg:col-start-3 lg:mt-0 lg:flex lg:items-center lg:justify-between">
+              <ul className="m-0 mt-[24px] flex list-none flex-wrap items-center justify-center gap-x-[12px] gap-y-[18px] p-0 lg:col-span-10 lg:col-start-3 lg:mt-0 lg:flex-nowrap lg:justify-between lg:gap-0">
                 {servicePartners.map((p, i) => (
-                  <li key={p.src} className="block flex-none">
+                  <li key={p.src} className="flex h-[40px] w-[calc(50%-6px)] items-center justify-center lg:h-auto lg:w-auto lg:flex-none">
                     <Image
                       src={p.src}
                       alt={PARTNER_NAMEN[i] ?? p.name}
                       width={250}
                       height={50}
-                      className="block h-auto w-[140px] dark:invert lg:w-[min(180px,12.5vw)]"
+                      className={`block h-auto w-auto max-w-full object-contain dark:invert lg:max-h-none lg:w-[min(180px,12.5vw)] lg:max-w-none ${PARTNER_MOBIL_HOEHE[i]}`}
                     />
                   </li>
                 ))}
