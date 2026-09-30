@@ -191,7 +191,7 @@ export const portfolioCases: readonly PortfolioCase[] = [
     ],
     meta: {
       service: 'System Integration',
-      technology: 'Magento 2 Commerce',
+      technology: 'OXID',
       year: '2023',
       location: 'Neufahrn',
       clientName: 'Hinke GmbH',
@@ -223,7 +223,7 @@ export const portfolioCases: readonly PortfolioCase[] = [
     ],
     meta: {
       service: 'System Integration',
-      technology: 'Plentymarkets',
+      technology: 'Shopware',
       year: '2023',
       location: 'Allmannshofen',
       clientName: 'Kaipara GmbH',
@@ -266,7 +266,7 @@ export const portfolioCases: readonly PortfolioCase[] = [
     ],
     meta: {
       service: 'System Integration',
-      technology: 'E-Commerce Platform',
+      technology: 'OXID',
       year: '2023',
       location: 'Hamburg, Nützen, Halstenbek',
       clientName: 'Riess-ambiente.de GmbH',

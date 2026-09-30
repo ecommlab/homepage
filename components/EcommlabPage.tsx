@@ -1,726 +1,429 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { ButtonLink } from './ButtonLink'
-import { Container } from './Container'
-import { LogoCarousel } from './LogoCarousel'
-import { PartnerLogos } from './PartnerLogos'
-import { ServiceCard } from './ServiceCard'
-import { SiteHeader } from './SiteHeader'
-import { TurnstileWidget } from './TurnstileWidget'
-import { ecommlabServices } from '../lib/ecommlabContent'
-import { portfolioItems } from '../lib/portfolio'
-import { normalizeLocale, tr } from '../lib/i18n'
+import { Fragment, useCallback, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
+import { EtikettFeld, Koernung } from './c2/EtikettFeld'
+import { Pfeil, Plus, Menue } from './c2/Icons'
+import { Kontaktformular } from './c2/Kontaktformular'
+import { EcommlabLogo } from './c2/Marken'
+import { MobilMenue } from './c2/MobilMenue'
+import { ReiterNav } from './c2/ReiterNav'
+import { RisoFilterDefs, RisoKachel, RisoUmschalter } from './c2/RisoKachel'
+import { SchaerfeTreppe } from './c2/SchaerfeTreppe'
+import { StartFuss } from './c2/StartFuss'
+import { useThema } from './c2/useThema'
+import { Zaehlwerk } from './c2/Zaehlwerk'
+import { geologica } from '../lib/fonts'
+import { normalizeLocale } from '../lib/i18n'
+import { servicePartners } from '../lib/servicePartners'
+import { startseiteInhalt } from '../lib/startseiteInhalt'
 
-const serviceCategories = [
-  {
-    titleDe: 'Digitale Präsenz & Entwicklung',
-    titleEn: 'Digital presence & development',
-    subtitleDe: 'E-Commerce, Webentwicklung, Plattform-Integrationen',
-    subtitleEn: 'E-commerce, web development, platform integrations',
-    href: '/leistungen',
-  },
-  {
-    titleDe: 'User Experience & Design',
-    titleEn: 'User experience & design',
-    subtitleDe: 'UX-Design & Usability',
-    subtitleEn: 'UX design & usability',
-    href: '/leistungen',
-  },
-  {
-    titleDe: 'Marketing & Wachstum',
-    titleEn: 'Marketing & growth',
-    subtitleDe: 'Online-Marketing, SEO & Content, Digitales Marketing & Automatisierung',
-    subtitleEn: 'Online marketing, SEO & content, digital marketing & automation',
-    href: '/leistungen',
-  },
-  {
-    titleDe: 'Strategie & Innovation',
-    titleEn: 'Strategy & innovation',
-    subtitleDe: 'Strategie & Beratung, KI & Automatisierung',
-    subtitleEn: 'Strategy & consulting, AI & automation',
-    href: '/leistungen',
-  },
+/**
+ * ecommlab.io – Startseite im Design C2 „Farbe bekennen“.
+ *
+ * Referenz (verbindlich):  handoff/ecommlab-startseite/referenz/startseite-desktop-1440.png  (Board C2plus-ecommlab, 1440 px)
+ *                          handoff/ecommlab-startseite/referenz/startseite-mobil-390.png     (Board C2m-ecommlab, 390 px)
+ * Umbruch Desktop/Mobil bei 1024 px (Tailwind `lg:`). Unter 1024 px gilt das Mobil-Board, ab 1024 px das Desktop-Board.
+ * Große Desktop-Schriften sind die px-Werte der 1440er-Referenz und schrumpfen zwischen 1024 und 1440 px mit (min(px, vw)).
+ * Die Seite ist auf 1440 px begrenzt und zentriert; der Papiergrund läuft über die volle Breite.
+ *
+ * Header und Footer der Startseite sind Teil dieser Seite (Logo-Etikett im Hero bzw. im Fuß).
+ * pages/_app.tsx darf auf "/" KEINEN SiteFooter rendern (siehe README).
+ */
+
+const PROJEKTE = [
+  { slug: 'pfundskerl-xxl-de', name: 'Pfundskerl', src: '/portfolio/pfundskerl.jpeg', crop: true, pos: '50% 50%', altDe: 'Pfundskerl – Model in olivgrüner Winterjacke vor Nebellandschaft', altEn: 'Pfundskerl – model in an olive winter jacket against a misty landscape' },
+  { slug: 'riess-ambiente', name: 'Riess-Ambiente', src: '/portfolio/riess-ambiente.png', crop: false, pos: '50% 50%', altDe: 'Riess-Ambiente – dunkles Ledersofa im Wohnraum', altEn: 'Riess-Ambiente – dark leather sofa in a living room' },
+  { slug: 'liquid-life', name: 'Liquid Life', src: '/portfolio/liquid-life.png', crop: false, pos: '50% 15%', altDe: 'Liquid Life – Mountainbiker im Sprung auf einem Waldtrail', altEn: 'Liquid Life – mountain biker jumping on a forest trail' },
+  { slug: 'baer-schuhe', name: 'Bär Schuhe', src: '/portfolio/baer-schuhe.png', crop: false, pos: '50% 35%', altDe: 'Bär Schuhe – Frau mit Lederschuhen in beiden Händen', altEn: 'Bär Schuhe – woman holding leather shoes in both hands' },
+  { slug: 'kaipara', name: 'Kaipara', src: '/portfolio/kaipara.jpg', crop: false, pos: '50% 40%', altDe: 'Kaipara – Mann im dunkelgrünen Longsleeve vor Bergkulisse', altEn: 'Kaipara – man in a dark green long-sleeve shirt against mountains' },
+  { slug: 'newone', name: 'Newone', src: '/portfolio/newone.png', crop: false, pos: '50% 50%', altDe: 'Newone – Armbänder am Handgelenk im warmen Licht', altEn: 'Newone – bracelets on a wrist in warm light' },
 ] as const
 
-const homeProjectSlugs = [
-  'pfundskerl-xxl-de',
-  'riess-ambiente',
-  'liquid-life',
-  'baer-schuhe',
-  'kaipara',
-  'newone',
-] as const
+/** Partner-Logos: ORIGINAL-Dateien aus public/partners (unverändert), Reihenfolge wie im Board. */
+const PARTNER_NAMEN = ['Shopify', 'PayPal', 'Cloudflare', 'Magento', 'Shopware'] as const
 
-const homeProjects = homeProjectSlugs
-  .map((slug) => portfolioItems.find((p) => p.slug === slug))
-  .filter((p): p is NonNullable<(typeof portfolioItems)[number]> => Boolean(p))
+/* ---------- kleine Bausteine ---------- */
 
-const faqs = [
-  {
-    qDe: 'Was macht Ecommlab genau?',
-    qEn: 'What does Ecommlab do?',
-    aDe: 'Ecommlab unterstützt Unternehmen dabei, ihre E-Commerce-Prozesse zu optimieren – von der Strategie und Systemauswahl bis zur technischen Umsetzung und Automatisierung.',
-    aEn: 'Ecommlab helps companies optimize their e-commerce processes — from strategy and platform selection to implementation and automation.',
-  },
-  {
-    qDe: 'Für wen sind eure Leistungen geeignet?',
-    qEn: 'Who are your services for?',
-    aDe: 'Für Unternehmen, die E-Commerce neu aufbauen, optimieren oder skalieren möchten – vom Mittelstand bis Enterprise.',
-    aEn: 'For companies that want to build, optimize, or scale e-commerce — from SMB to enterprise.',
-  },
-  {
-    qDe: 'Mit welchen Systemen und Tools arbeitet ihr?',
-    qEn: 'Which platforms and tools do you work with?',
-    aDe: 'Wir setzen auf führende Plattformen und Technologien wie Shopify, Shopware, WooCommerce, HubSpot, Klaviyo und individuelle API-Integrationen – immer abgestimmt auf Ihre Anforderungen.',
-    aEn: 'We work with leading platforms and technologies like Shopify, Shopware, WooCommerce, HubSpot, Klaviyo, and custom API integrations — tailored to your needs.',
-  },
-  {
-    qDe: 'Bietet ihr auch Beratung ohne direkte Umsetzung an?',
-    qEn: 'Do you offer consulting without implementation?',
-    aDe: 'Ja – wir unterstützen bei Strategie, Systemauswahl, Roadmaps und Reviews, auch wenn die Umsetzung intern oder mit anderen Partnern erfolgt.',
-    aEn: 'Yes — we support strategy, platform selection, roadmaps, and reviews, even if implementation happens in-house or with other partners.',
-  },
-  {
-    qDe: 'Wie läuft eine Zusammenarbeit mit Ecommlab ab?',
-    qEn: 'How does a typical collaboration work?',
-    aDe: 'Typisch: kurzes Erstgespräch → Analyse & Zielbild → Konzept/Roadmap → Umsetzung in Iterationen → Messung & Optimierung.',
-    aEn: 'Typical flow: quick intro call → analysis & target picture → concept/roadmap → iterative implementation → measurement & optimization.',
-  },
-] as const
-
-export function EcommlabPage() {
-  const router = useRouter()
-  const locale = normalizeLocale(router.locale)
-  const [contactStatus, setContactStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  const [contactError, setContactError] = useState<string>('')
-  const [contactFieldErrors, setContactFieldErrors] = useState<{
-    name?: string
-    email?: string
-    message?: string
-    captcha?: string
-  }>({})
-  const [captchaToken, setCaptchaToken] = useState<string>('')
-  const [captchaKey, setCaptchaKey] = useState(0)
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
-
+/** Zeilen einer Überschrift: Umbruch nur ab 1024 px; `nowrap` hält ein Wort auch mobil zusammen. */
+function Zeilen({ zeilen, nowrap }: { zeilen: readonly string[]; nowrap?: string }) {
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
+    <>
+      {zeilen.map((z, i) => {
+        let inhalt: ReactNode = z
+        if (nowrap && z.includes(nowrap)) {
+          const [vor, nach] = z.split(nowrap)
+          inhalt = (
+            <>
+              {vor}
+              <span className="whitespace-nowrap">{nowrap}</span>
+              {nach}
+            </>
+          )
+        }
+        return (
+          <Fragment key={i}>
+            {inhalt}
+            {i < zeilen.length - 1 ? (
+              <>
+                {' '}
+                <br className="hidden lg:inline" />
+              </>
+            ) : null}
+          </Fragment>
+        )
+      })}
+    </>
+  )
+}
 
-      <main>
-        <section className="relative overflow-hidden">
-          <div aria-hidden className="absolute inset-0 -z-10">
-            <video
-              className="h-full w-full object-cover"
-              src="/videos/hero.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-            />
-            {/* brighter look like wp.ecommlab.io */}
-            <div className="absolute inset-0 bg-white/75 dark:bg-black/45" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(14,165,233,0.16),transparent_55%),radial-gradient(circle_at_70%_10%,rgba(168,85,247,0.12),transparent_55%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(14,165,233,0.26),transparent_55%),radial-gradient(circle_at_70%_10%,rgba(168,85,247,0.22),transparent_55%)]" />
-          </div>
+/** Rubrik-Pille (Tinte): mobil 30 hoch / 13 px, Desktop 34 hoch / 14 px. */
+function Rubrik({ children }: { children: ReactNode }) {
+  return (
+    <p
+      className="m-0 inline-flex h-[30px] items-center self-start whitespace-nowrap rounded-full px-[12px] text-[13px] font-semibold leading-none lg:h-[34px] lg:px-[14px] lg:text-[14px]"
+      style={{ background: 'var(--c2-ink)', color: 'var(--c2-surface)' }}
+    >
+      {children}
+    </p>
+  )
+}
 
-          <Container>
-            <div className="py-20 sm:py-28">
-              <h1 className="max-w-4xl text-balance font-display text-5xl font-semibold leading-[1.02] tracking-tight text-zinc-900 sm:text-7xl dark:text-white">
-                Create.Inspire.
-                <br />
-                Perform.
-              </h1>
+const H2_SCHARF = "m-0 font-extrabold [font-variation-settings:'SHRP'_100]"
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <ButtonLink href="#leistungen">
-                  {tr(locale, 'UNSERE LEISTUNGEN', 'OUR SERVICES')}
-                </ButtonLink>
-                <ButtonLink href="#was-machen-wir" variant="secondary">
-                  {tr(locale, 'WAS MACHEN WIR', 'WHAT WE DO')}
-                </ButtonLink>
-              </div>
-
-              <PartnerLogos />
-            </div>
-          </Container>
-        </section>
-
-        <section id="was-machen-wir" className="py-14 sm:py-16">
-          <Container>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'WAS MACHEN WIR', 'WHAT WE DO')}
-                </p>
-                <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {locale === 'en' ? (
-                    <>
-                      We help companies unlock their{' '}
-                      <span className="whitespace-nowrap">e-commerce</span> potential
-                    </>
-                  ) : (
-                    <>
-                      Wir helfen Unternehmen, ihr <span className="whitespace-nowrap">E-Commerce</span>{' '}
-                      Potenzial zu erschließen
-                    </>
-                  )}
-                </h2>
-              </div>
-              <div className="text-zinc-600 dark:text-zinc-300">
-                <p className="text-base">
-                  {tr(
-                    locale,
-                    'Wir verwandeln Kundenbeziehungen in Partnerschaften und führen Ihr digitales Projekt zum Erfolg.',
-                    'We turn customer relationships into partnerships and drive your digital project to success.',
-                  )}
-                </p>
-                <p className="mt-4 text-base">
-                  {tr(
-                    locale,
-                    'Wir arbeiten eng mit Ihnen zusammen, um das ideale E-Commerce-System und passende Lösungen zu identifizieren. Bei uns stehen Ihre Anforderungen und die Benutzererfahrung Ihrer Kunden stets im Mittelpunkt. Mit unserem Team aus versierten E-Commerce-Experten und vernetzten Entwicklern managen wir Projekte jeglicher Größe effizient und kompetent, auch auf internationaler Ebene.',
-                    'We work closely with you to identify the ideal e-commerce platform and the right solutions. Your requirements and your customers’ experience are always at the center. With seasoned e-commerce experts and a strong developer network, we run projects of any size efficiently — also internationally.',
-                  )}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 grid gap-4 lg:grid-cols-2">
-              <div className="rounded-3xl border border-zinc-200 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
-                <h3 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(
-                    locale,
-                    'Mehr Umsatz, bessere Kundenerlebnisse, reibungslose Prozesse – mit Ecommlab.',
-                    'More revenue, better customer experiences, smoother operations — with Ecommlab.',
-                  )}
-                </h3>
-                <p className="mt-3 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                  {tr(
-                    locale,
-                    'Von der Optimierung bis zur Skalierung – wir machen Ihr E-Commerce fit für die Zukunft.',
-                    'From optimization to scaling — we get your e-commerce ready for the future.',
-                  )}
-                </p>
-                <div className="mt-6">
-                  <ButtonLink href="/kontakt">
-                    {tr(locale, 'Kontaktieren Sie uns', 'Contact us')}
-                  </ButtonLink>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-7 dark:border-zinc-800 dark:bg-zinc-900/30 sm:p-8">
-                <h3 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(
-                    locale,
-                    'Wir arbeiten eng mit Ihnen zusammen, um das ideale E-Commerce-System und passende Lösungen zu identifizieren.',
-                    'We work closely with you to identify the ideal e-commerce platform and the right solutions.',
-                  )}
-                </h3>
-                <p className="mt-3 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                  {tr(
-                    locale,
-                    'Beginnen wir gemeinsam eine Reise, um Ihren Kunden ein herausragendes digitales Erlebnis zu bieten!',
-                    'Let’s start a journey together to deliver an outstanding digital experience for your customers.',
-                  )}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-zinc-200 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-950">
-                <div className="font-display text-5xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  15<span className="text-zinc-400">+</span>
-                </div>
-                <div className="mt-2 text-sm font-semibold uppercase tracking-[0.18em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'Jahre Erfahrung', 'Years of experience')}
-                </div>
-              </div>
-              <div className="rounded-3xl border border-zinc-200 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-950">
-                <div className="font-display text-5xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  300<span className="text-zinc-400">+</span>
-                </div>
-                <div className="mt-2 text-sm font-semibold uppercase tracking-[0.18em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'Erfolgreiche Projekte', 'Successful projects')}
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        <section id="leistungen" className="py-14 sm:py-16">
-          <Container>
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'Was können wir für Sie tun', 'What can we do for you')}
-                </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(locale, 'Leistungen, bei denen wir Ihnen helfen können', 'Services we can help you with')}
-                </h2>
-                <p className="mt-2 max-w-2xl text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                  {tr(
-                    locale,
-                    'Wir sorgen dafür, dass Sie immer den besten digitalen Service bekommen.',
-                    'We make sure you always get the best digital service.',
-                  )}
-                </p>
-              </div>
-              <ButtonLink href="/leistungen" variant="secondary">
-                {tr(locale, 'Alle Leistungen', 'All services')}
-              </ButtonLink>
-            </div>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {serviceCategories.map((c) => (
-                <Link
-                  key={c.titleDe}
-                  href={c.href}
-                  className="rounded-3xl border border-zinc-200 bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
-                >
-                  <div className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-600 dark:text-zinc-300">
-                    {tr(locale, c.titleDe, c.titleEn)}
-                  </div>
-                  <div className="mt-3 text-base font-semibold text-zinc-900 dark:text-white">
-                    {tr(locale, c.subtitleDe, c.subtitleEn)}
-                  </div>
-                  <div className="mt-6 text-sm font-semibold text-zinc-900 dark:text-white">
-                    {tr(locale, 'Mehr erfahren', 'Learn more')} <span className="inline-block">→</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'So setzen wir Ideen um', 'How we deliver')}
-                </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(locale, 'Auszug unserer Projekte', 'Selected projects')}
-                </h2>
-                <p className="mt-2 max-w-2xl text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                  {tr(
-                    locale,
-                    'Gemeinsam mit unseren Kunden gestalten wir nachhaltigen Erfolg.',
-                    'Together with our clients, we build sustainable success.',
-                  )}
-                </p>
-              </div>
-              <ButtonLink href="/referenzen" variant="secondary">
-                {tr(locale, 'Unsere Referenzen', 'Our work')}
-              </ButtonLink>
-            </div>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {homeProjects.map((p) => (
-                <Link
-                  key={p.slug}
-                  href={`/referenzen/${p.slug}`}
-                  className="group overflow-hidden rounded-3xl border border-zinc-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
-                >
-                  <div className="relative aspect-[16/9] bg-zinc-100 dark:bg-zinc-900">
-                    <Image
-                      src={p.imageSrc}
-                      alt={tr(locale, `${p.title} – Projektbild`, `${p.title} – project image`)}
-                      fill
-                      className="object-cover transition duration-300 group-hover:scale-[1.02]"
-                      sizes="(max-width: 1024px) 100vw, 33vw"
-                    />
-                  </div>
-
-                  <div className="p-6">
-                    <div className="text-lg font-semibold text-zinc-900 dark:text-white">{p.title}</div>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {p.tags.slice(0, 3).map((t) => (
-                        <span
-                          key={t}
-                          className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/30 dark:text-zinc-200"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-8 dark:border-zinc-800 dark:bg-zinc-900/30 sm:p-10">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                {tr(locale, 'Die Basis für Ihren nachhaltigen Erfolg', 'The foundation for sustainable success')}
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                {tr(locale, 'Strategische Auswahl von Partnern, Systemen und Tools', 'Strategic selection of partners, systems, and tools')}
-              </h2>
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                {tr(
-                  locale,
-                  'Die sorgfältige Auswahl von Partnern, Systemen und Tools im E-Commerce ermöglicht, dass Unternehmen agil, wettbewerbsfähig und kundenorientiert bleiben, was für den langfristigen Erfolg in einem sich schnell entwickelnden Markt entscheidend ist.',
-                  'Careful selection of partners, systems, and tools in e-commerce helps companies stay agile, competitive, and customer-centric — crucial for long-term success in a fast-moving market.',
-                )}
-              </p>
-
-              <LogoCarousel className="mt-8 rounded-2xl border border-zinc-200 bg-white/60 px-2 dark:border-zinc-800 dark:bg-zinc-950/40" />
-
-              <div className="mt-10 grid gap-4 sm:grid-cols-2">
-                {[
-                  {
-                    n: '01.',
-                    tDe: 'Effizienz & Skalierbarkeit',
-                    tEn: 'Efficiency & scalability',
-                    dDe: 'Automatisierte und skalierbare Systeme optimieren Abläufe, sparen Zeit und wachsen flexibel mit Ihrem Business.',
-                    dEn: 'Automated, scalable systems streamline operations, save time, and grow with your business.',
-                  },
-                  {
-                    n: '02.',
-                    tDe: 'Kundenerlebnis & Bindung',
-                    tEn: 'Customer experience & retention',
-                    dDe: 'Personalisierte Empfehlungen, einfache Zahlungen und schnelle Suche schaffen Einkaufserlebnisse, die Kunden lieben.',
-                    dEn: 'Personalized recommendations, frictionless payments, and fast search create shopping experiences customers love.',
-                  },
-                  {
-                    n: '03.',
-                    tDe: 'Daten & Sicherheit',
-                    tEn: 'Data & security',
-                    dDe: 'Nutzen Sie wertvolle Insights für bessere Entscheidungen – mit maximaler Datensicherheit und Compliance.',
-                    dEn: 'Use valuable insights to make better decisions — with maximum data security and compliance.',
-                  },
-                  {
-                    n: '04.',
-                    tDe: 'Innovation & Wettbewerbsvorteil',
-                    tEn: 'Innovation & competitive edge',
-                    dDe: 'Setzen Sie auf moderne Technologien und Partnerschaften, um Märkte zu erobern und der Konkurrenz voraus zu sein.',
-                    dEn: 'Leverage modern technologies and partnerships to win markets and stay ahead of the competition.',
-                  },
-                ].map((x) => (
-                  <div
-                    key={x.n}
-                    className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"
-                  >
-                    <div className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
-                      {x.n}
-                    </div>
-                    <div className="mt-2 text-base font-semibold text-zinc-900 dark:text-white">
-                      {tr(locale, x.tDe, x.tEn)}
-                    </div>
-                    <p className="mt-2 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                      {tr(locale, x.dDe, x.dEn)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6">
-                <ButtonLink href="/leistungen/partners-und-tools">
-                  {tr(locale, 'Mehr erfahren', 'Learn more')}
-                </ButtonLink>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'Unser Anspruch', 'Our standard')}
-                </p>
-                <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(
-                    locale,
-                    'Messbare Erfolge, zufriedene Kunden und nachhaltiges Wachstum.',
-                    'Measurable results, happy customers, sustainable growth.',
-                  )}
-                </h2>
-                <p className="mt-4 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                  {tr(
-                    locale,
-                    'Wir helfen E-Commerce-Unternehmen, ihr volles Potenzial auszuschöpfen – mit Strategie, Design, Technologie und datengetriebenem Wachstum.',
-                    'We help e-commerce companies unlock their full potential — with strategy, design, technology, and data-driven growth.',
-                  )}
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-zinc-200 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
-                <h3 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(locale, 'Häufig gestellte Fragen (FAQ)', 'Frequently asked questions (FAQ)')}
-                </h3>
-                <div className="mt-6 grid gap-3">
-                  {faqs.map((f) => (
-                    <details
-                      key={f.qDe}
-                      className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 open:bg-white dark:border-zinc-800 dark:bg-zinc-900/30 dark:open:bg-zinc-950"
-                    >
-                      <summary className="cursor-pointer text-base font-semibold text-zinc-900 dark:text-white">
-                        {tr(locale, f.qDe, f.qEn)}
-                      </summary>
-                      <p className="mt-3 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                        {tr(locale, f.aDe, f.aEn)}
-                      </p>
-                    </details>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="rounded-3xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-950 sm:p-10">
-              <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                {tr(locale, 'Kontaktiere uns', 'Get in touch')}
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                {tr(
-                  locale,
-                  'Schreib uns kurz, worum es geht – wir melden uns zeitnah zurück.',
-                  'Tell us briefly what it’s about — we’ll get back to you soon.',
-                )}
-              </p>
-
-              <form
-                className="mt-6 grid gap-4 sm:grid-cols-2"
-                onSubmit={async (e) => {
-                  e.preventDefault()
-                  setContactStatus('sending')
-                  setContactError('')
-                  setContactFieldErrors({})
-
-                  const form = e.currentTarget
-                  const fd = new FormData(form)
-                  const payload = {
-                    name: String(fd.get('name') ?? ''),
-                    email: String(fd.get('email') ?? ''),
-                    message: String(fd.get('message') ?? ''),
-                    _hp: String(fd.get('_hp') ?? ''),
-                    turnstileToken: captchaToken,
-                  }
-
-                  const nextErrors: typeof contactFieldErrors = {}
-                  if (!payload.name.trim()) nextErrors.name = tr(locale, 'Pflichtfeld', 'Required')
-                  if (!payload.email.trim()) nextErrors.email = tr(locale, 'Pflichtfeld', 'Required')
-                  if (!payload.message.trim()) nextErrors.message = tr(locale, 'Pflichtfeld', 'Required')
-                  if (!captchaToken) nextErrors.captcha = tr(locale, 'Bitte Captcha ausfüllen', 'Please complete the captcha')
-                  if (Object.keys(nextErrors).length) {
-                    setContactFieldErrors(nextErrors)
-                    setContactError(tr(locale, 'Bitte prüfen Sie die markierten Felder.', 'Please check the highlighted fields.'))
-                    setContactStatus('error')
-                    return
-                  }
-
-                  try {
-                    const r = await fetch('/api/contact', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify(payload),
-                    })
-                    const raw = await r.text()
-                    let json: { ok?: boolean; error?: string } | null = null
-                    try {
-                      json = raw ? (JSON.parse(raw) as { ok?: boolean; error?: string }) : null
-                    } catch {
-                      // non-JSON response (often HTML from proxy/redirect)
-                    }
-
-                    if (!r.ok || !json?.ok) {
-                      const looksLikeHtml = raw.trim().startsWith('<!DOCTYPE') || raw.trim().startsWith('<html')
-                      const fallback = looksLikeHtml
-                        ? tr(
-                            locale,
-                            'Server-Antwort war HTML (Proxy/Redirect). Bitte prüfe, ob `/api/contact` wirklich auf die Next.js-App zeigt.',
-                            'Server returned HTML (proxy/redirect). Please verify `/api/contact` routes to the Next.js app.',
-                          )
-                        : raw.slice(0, 200)
-                      throw new Error(json?.error || fallback || 'Request failed')
-                    }
-                    form.reset()
-                    setCaptchaToken('')
-                    setCaptchaKey((k) => k + 1)
-                    setContactStatus('sent')
-                  } catch (err) {
-                    setContactStatus('error')
-                    setContactError(err instanceof Error ? err.message : 'Unknown error')
-                  }
-                }}
-              >
-                <input
-                  name="_hp"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  className="hidden"
-                  aria-hidden="true"
-                  defaultValue=""
-                />
-                <label className="grid gap-1">
-                  <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                    {tr(locale, 'Name', 'Name')}
-                  </span>
-                  <input
-                    name="name"
-                    required
-                    minLength={2}
-                    aria-invalid={Boolean(contactFieldErrors.name)}
-                    onInvalid={(e) => {
-                      const el = e.currentTarget
-                      if (el.validity.valueMissing) {
-                        el.setCustomValidity(tr(locale, 'Bitte Name eingeben.', 'Please enter your name.'))
-                      } else if (el.validity.tooShort) {
-                        el.setCustomValidity(
-                          tr(locale, 'Bitte mindestens 2 Zeichen eingeben.', 'Please enter at least 2 characters.'),
-                        )
-                      } else {
-                        el.setCustomValidity('')
-                      }
-                    }}
-                    onInput={(e) => e.currentTarget.setCustomValidity('')}
-                    className={[
-                      'h-11 rounded-xl border bg-white px-3 text-sm text-zinc-900 outline-none ring-0 focus:border-zinc-400 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:border-zinc-500',
-                      contactFieldErrors.name ? 'border-red-300 dark:border-red-900/60' : 'border-zinc-200 dark:border-zinc-800',
-                    ].join(' ')}
-                    placeholder={tr(locale, 'Max Mustermann', 'Jane Doe')}
-                  />
-                  {contactFieldErrors.name ? (
-                    <div className="text-xs font-semibold text-red-700 dark:text-red-300">{contactFieldErrors.name}</div>
-                  ) : null}
-                </label>
-
-                <label className="grid gap-1">
-                  <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                    {tr(locale, 'E-Mail', 'Email')}
-                  </span>
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    aria-invalid={Boolean(contactFieldErrors.email)}
-                    onInvalid={(e) => {
-                      const el = e.currentTarget
-                      if (el.validity.valueMissing) {
-                        el.setCustomValidity(tr(locale, 'Bitte E-Mail eingeben.', 'Please enter your email address.'))
-                      } else if (el.validity.typeMismatch) {
-                        el.setCustomValidity(
-                          tr(locale, 'Bitte eine gültige E-Mail eingeben.', 'Please enter a valid email address.'),
-                        )
-                      } else {
-                        el.setCustomValidity('')
-                      }
-                    }}
-                    onInput={(e) => e.currentTarget.setCustomValidity('')}
-                    className={[
-                      'h-11 rounded-xl border bg-white px-3 text-sm text-zinc-900 outline-none ring-0 focus:border-zinc-400 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:border-zinc-500',
-                      contactFieldErrors.email ? 'border-red-300 dark:border-red-900/60' : 'border-zinc-200 dark:border-zinc-800',
-                    ].join(' ')}
-                    placeholder={tr(locale, 'name@firma.de', 'name@company.com')}
-                  />
-                  {contactFieldErrors.email ? (
-                    <div className="text-xs font-semibold text-red-700 dark:text-red-300">{contactFieldErrors.email}</div>
-                  ) : null}
-                </label>
-
-                <label className="grid gap-1 sm:col-span-2">
-                  <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                    {tr(locale, 'Nachricht', 'Message')}
-                  </span>
-                  <textarea
-                    name="message"
-                    rows={5}
-                    required
-                    minLength={10}
-                    aria-invalid={Boolean(contactFieldErrors.message)}
-                    onInvalid={(e) => {
-                      const el = e.currentTarget
-                      if (el.validity.valueMissing) {
-                        el.setCustomValidity(tr(locale, 'Bitte Nachricht eingeben.', 'Please enter a message.'))
-                      } else if (el.validity.tooShort) {
-                        el.setCustomValidity(
-                          tr(locale, 'Bitte mindestens 10 Zeichen eingeben.', 'Please enter at least 10 characters.'),
-                        )
-                      } else {
-                        el.setCustomValidity('')
-                      }
-                    }}
-                    onInput={(e) => e.currentTarget.setCustomValidity('')}
-                    className={[
-                      'rounded-xl border bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-0 focus:border-zinc-400 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:border-zinc-500',
-                      contactFieldErrors.message ? 'border-red-300 dark:border-red-900/60' : 'border-zinc-200 dark:border-zinc-800',
-                    ].join(' ')}
-                    placeholder={tr(locale, 'Wobei können wir helfen?', 'How can we help?')}
-                  />
-                  {contactFieldErrors.message ? (
-                    <div className="text-xs font-semibold text-red-700 dark:text-red-300">
-                      {contactFieldErrors.message}
-                    </div>
-                  ) : null}
-                </label>
-
-                <div className="sm:col-span-2">
-                  {siteKey ? (
-                    <>
-                      <TurnstileWidget
-                        key={captchaKey}
-                        siteKey={siteKey}
-                        onToken={(t) => setCaptchaToken(t)}
-                        className="mt-1"
-                      />
-                      {contactFieldErrors.captcha ? (
-                        <div className="mt-2 text-xs font-semibold text-red-700 dark:text-red-300">
-                          {contactFieldErrors.captcha}
-                        </div>
-                      ) : null}
-                    </>
-                  ) : (
-                    <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                      {tr(
-                        locale,
-                        'Captcha ist noch nicht konfiguriert (NEXT_PUBLIC_TURNSTILE_SITE_KEY).',
-                        'Captcha is not configured yet (NEXT_PUBLIC_TURNSTILE_SITE_KEY).',
-                      )}
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={contactStatus === 'sending'}
-                    className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-5 text-sm font-semibold text-white transition hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-60 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 dark:focus-visible:ring-white dark:focus-visible:ring-offset-zinc-950"
-                  >
-                    {contactStatus === 'sending'
-                      ? tr(locale, 'Sende…', 'Sending…')
-                      : tr(locale, 'Senden', 'Send')}
-                  </button>
-                  {contactStatus === 'sent' ? (
-                    <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200">
-                      {tr(
-                        locale,
-                        'Vielen Dank für Ihre Nachricht! Wir melden uns schnellstmöglich bei Ihnen zurück!',
-                        'Thanks! We will get back to you as soon as possible.',
-                      )}
-                    </div>
-                  ) : null}
-                  {contactStatus === 'error' ? (
-                    <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
-                      {tr(locale, 'Senden fehlgeschlagen:', 'Sending failed:')} {contactError}
-                    </div>
-                  ) : null}
-                </div>
-              </form>
-            </div>
-          </Container>
-        </section>
-      </main>
-
-      {/* Footer is rendered globally in pages/_app.tsx */}
+/** Kopf von Leistungen/Referenzen: links Rubrik + H2 (7 Spalten), rechts Text + Link (Spalten 9–12). */
+function SektionsKopf({ rubrik, id, zeilen, text, linkHref, linkText }: { rubrik: string; id: string; zeilen: readonly string[]; text: string; linkHref: string; linkText: string }) {
+  return (
+    <div className="flex flex-col lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-[24px]">
+      <div className="flex flex-col lg:col-span-7">
+        <Rubrik>{rubrik}</Rubrik>
+        <h2
+          id={id}
+          className={`${H2_SCHARF} mt-[12px] text-balance text-[32px] leading-[1.06] tracking-[-0.025em] lg:mt-[24px] lg:whitespace-nowrap lg:text-[length:min(56px,3.889vw)] lg:leading-[1.02]`}
+        >
+          <Zeilen zeilen={zeilen} />
+        </h2>
+      </div>
+      <div className="flex flex-col lg:col-span-4 lg:col-start-9 lg:gap-[4px]">
+        <p className="m-0 mt-[14px] text-pretty text-[17px] leading-[1.55] lg:mt-0 lg:text-[19px] lg:leading-[1.5]">{text}</p>
+        <Link href={linkHref} className="hidden min-h-[44px] items-center self-start text-[17px] font-semibold underline lg:inline-flex">
+          {linkText}
+        </Link>
+      </div>
     </div>
   )
 }
 
+/* ---------- Seite ---------- */
+
+export function EcommlabPage() {
+  const router = useRouter()
+  const locale = normalizeLocale(router.locale)
+  const t = startseiteInhalt(locale)
+  const en = locale === 'en'
+
+  const heroRef = useRef<HTMLDivElement>(null)
+  const [lasche, setLasche] = useState(false)
+  const [menue, setMenue] = useState(false)
+  const [riso, setRiso] = useState(true)
+  const { thema, umschalten } = useThema()
+  const menueZu = useCallback(() => setMenue(false), [])
+
+  const hauptnav = [
+    { href: '/leistungen', label: t.nav.leistungen },
+    { href: '/referenzen', label: t.nav.referenzen },
+    { href: '/team', label: t.nav.team },
+    { href: '/karriere', label: t.nav.karriere },
+  ]
+  const kontaktLink = { href: '/kontakt', label: t.nav.kontakt }
+
+  return (
+    <div className={`c2-seite ${geologica.variable} min-h-screen`}>
+      {/* Papier-Körnung über der ganzen Seite (Board: 6 %, multiply) */}
+      <Koernung opacity={0.06} className="!fixed z-[60]" />
+
+      <div className="mx-auto max-w-[1440px]">
+        <main>
+          {/* ============ HERO ============ */}
+          <section id="hero" aria-labelledby="c2-hero-title" className="px-[16px] pt-[16px]">
+            <div ref={heroRef}>
+              <EtikettFeld
+                color="var(--c2-orchid)"
+                textColor="var(--c2-field-text)"
+                tab={{ h: 64, pl: 16, pr: 16 }}
+                tabLg={{ h: 96, pl: 64, pr: 40 }}
+                stanz
+                lasche={lasche}
+                etikett={
+                  <Link
+                    href="/"
+                    aria-label={t.kopf.startseite}
+                    className="block"
+                    style={{ color: 'var(--c2-ink)', animation: 'c2-etikett-in 260ms var(--c2-ease-out) 560ms backwards' }}
+                    onMouseEnter={() => setLasche(true)}
+                    onMouseLeave={() => setLasche(false)}
+                    onFocus={() => setLasche(true)}
+                    onBlur={() => setLasche(false)}
+                  >
+                    <EcommlabLogo className="w-[124px] lg:w-[160px]" />
+                  </Link>
+                }
+              >
+                {/* Desktop-Kopf im Feld */}
+                <div className="absolute right-[64px] top-[26px] z-[3] hidden items-center gap-[28px] lg:flex">
+                  <ReiterNav items={hauptnav} ariaLabel={t.kopf.hauptnavigation} />
+                  <nav aria-label={t.kopf.sprache} className="flex items-center gap-[2px] text-[15px] leading-none" style={{ color: 'var(--c2-field-text)' }}>
+                    {en ? (
+                      <Link href={router.asPath} locale="de" lang="de" hrefLang="de" aria-label="Deutsch" className="inline-flex min-h-[44px] items-center px-[4px] font-medium no-underline hover:underline">
+                        DE
+                      </Link>
+                    ) : (
+                      <span lang="de" aria-current="true" className="inline-flex min-h-[44px] items-center px-[4px] font-semibold">
+                        DE
+                      </span>
+                    )}
+                    <span aria-hidden className="font-medium">
+                      ·
+                    </span>
+                    {en ? (
+                      <span lang="en" aria-current="true" className="inline-flex min-h-[44px] items-center px-[4px] font-semibold">
+                        EN
+                      </span>
+                    ) : (
+                      <Link href={router.asPath} locale="en" lang="en" hrefLang="en" aria-label="English" className="inline-flex min-h-[44px] items-center px-[4px] font-medium no-underline hover:underline">
+                        EN
+                      </Link>
+                    )}
+                  </nav>
+                  <Link href={kontaktLink.href} className="c2-pill-feld inline-flex h-[44px] items-center justify-center whitespace-nowrap rounded-full px-[20px] text-[15px] font-semibold leading-none no-underline">
+                    {kontaktLink.label}
+                  </Link>
+                </div>
+
+                {/* Mobil-Menüknopf */}
+                <button
+                  type="button"
+                  aria-label={t.kopf.menueOeffnen}
+                  aria-expanded={menue}
+                  aria-controls="c2-menue"
+                  onClick={() => setMenue(true)}
+                  className="absolute right-[10px] top-[10px] z-[3] flex h-[48px] w-[48px] items-center justify-center rounded-full border-0 bg-transparent p-0 lg:hidden"
+                  style={{ color: 'var(--c2-field-text)' }}
+                >
+                  <Menue />
+                </button>
+
+                <div className="c2-treppe relative flex flex-col px-[24px] pb-[32px] pt-[116px] lg:block lg:px-0 lg:pb-[100px] lg:pt-[152px]">
+                  <SchaerfeTreppe areaRef={heroRef} id="c2-hero-title" />
+                  {/* Desktop: Pillen links unter „Create.“ (Board: left 64, top 500 bei 184 px → 152 px + 1,8913 × Schriftgröße) */}
+                  <div className="mt-[32px] flex flex-col gap-[12px] [animation:c2-fade_300ms_ease-out_820ms_both] lg:absolute lg:left-[64px] lg:top-[calc(152px+1.8913*var(--c2-hero-fs))] lg:mt-0 lg:w-[220px] lg:[animation:c2-fade_300ms_ease-out_920ms_both]">
+                    <Link href="#leistungen" className="c2-pill-feld inline-flex h-[52px] items-center justify-center whitespace-nowrap rounded-full px-[24px] text-[17px] font-semibold leading-none no-underline lg:h-[56px] lg:px-[28px]">
+                      {t.hero.unsereLeistungen}
+                    </Link>
+                    <Link href="#was-machen-wir" className="c2-pill-feld-line inline-flex h-[52px] items-center justify-center whitespace-nowrap rounded-full px-[24px] text-[17px] font-semibold leading-none no-underline lg:h-[56px] lg:px-[28px]">
+                      {t.hero.wasMachenWir}
+                    </Link>
+                  </div>
+                </div>
+              </EtikettFeld>
+            </div>
+          </section>
+
+          {/* ============ SERVICE-PARTNER ============ */}
+          <section aria-label={t.partner.titel} className="px-[24px] pb-[24px] pt-[40px] lg:px-[80px] lg:pb-[96px] lg:pt-[48px]">
+            <div className="flex flex-col lg:grid lg:h-[40px] lg:grid-cols-12 lg:items-center lg:gap-x-[24px]">
+              <p className="m-0 text-[14px] font-semibold leading-[1.3] lg:col-span-2 lg:leading-none" style={{ color: 'var(--c2-muted)' }}>
+                {t.partner.titel}
+              </p>
+              <ul className="m-0 mt-[20px] grid list-none grid-cols-2 gap-x-[16px] gap-y-[20px] p-0 lg:col-span-10 lg:col-start-3 lg:mt-0 lg:flex lg:items-center lg:justify-between">
+                {servicePartners.map((p, i) => (
+                  <li key={p.src} className="block flex-none">
+                    <Image
+                      src={p.src}
+                      alt={PARTNER_NAMEN[i] ?? p.name}
+                      width={250}
+                      height={50}
+                      className="block h-auto w-[140px] dark:invert lg:w-[min(180px,12.5vw)]"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
+          {/* ============ WAS MACHEN WIR ============ */}
+          <section id="was-machen-wir" aria-labelledby="c2-was" className="flex flex-col px-[24px] py-[48px] lg:px-[80px] lg:pb-[120px] lg:pt-0">
+            <Rubrik>{t.was.rubrik}</Rubrik>
+            <h2
+              id="c2-was"
+              className={`${H2_SCHARF} mt-[16px] text-balance text-[30px] leading-[1.06] tracking-[-0.025em] lg:mt-[28px] lg:whitespace-nowrap lg:text-[length:min(80px,5.556vw)] lg:leading-none lg:tracking-[-0.03em]`}
+            >
+              <Zeilen zeilen={t.was.titelZeilen} nowrap={t.was.nowrapWort} />
+            </h2>
+            <div className="flex flex-col lg:mt-[64px] lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-[24px]">
+              <p className="m-0 mt-[16px] text-pretty text-[18px] leading-[1.55] lg:col-span-5 lg:mt-0 lg:text-[length:min(28px,1.944vw)] lg:font-medium lg:leading-[1.35] lg:tracking-[-0.01em]">
+                {t.was.text}
+              </p>
+              <div className="mt-[32px] grid grid-cols-2 gap-[24px] lg:col-span-6 lg:col-start-7 lg:mt-0">
+                <Zaehlwerk value={15} label={t.was.jahre} durations={[1000, 900]} starts={[320, 200]} />
+                <Zaehlwerk value={300} label={t.was.projekte} durations={[1100, 1000, 900]} starts={[560, 440, 320]} offset={120} />
+              </div>
+            </div>
+          </section>
+
+          {/* ============ LEISTUNGEN ============ */}
+          <section id="leistungen" aria-labelledby="c2-leist" className="flex flex-col px-[24px] py-[56px] lg:px-[80px] lg:pb-[120px] lg:pt-0">
+            <SektionsKopf rubrik={t.leistungen.rubrik} id="c2-leist" zeilen={t.leistungen.titelZeilen} text={t.leistungen.text} linkHref="/leistungen" linkText={t.leistungen.alle} />
+            <ul className="m-0 mt-[28px] list-none border-b-2 p-0 lg:mt-[56px]" style={{ borderColor: 'var(--c2-ink)' }}>
+              {t.leistungen.kategorien.map((k) => (
+                <li key={k.titel} className="block">
+                  <Link
+                    href="/leistungen"
+                    className="c2-reg flex items-center gap-[16px] border-t-2 py-[20px] no-underline lg:grid lg:min-h-[104px] lg:grid-cols-12 lg:gap-x-[24px] lg:gap-y-0 lg:py-[12px]"
+                    style={{ borderColor: 'var(--c2-ink)' }}
+                  >
+                    <span className="flex flex-1 flex-col gap-[6px] lg:contents">
+                      <span className="text-[20px] font-bold leading-[1.2] [font-variation-settings:'SHRP'_50] lg:col-span-6 lg:whitespace-nowrap lg:text-[length:min(36px,2.5vw)] lg:leading-[1.1] lg:tracking-[-0.015em]">
+                        {k.titel}
+                      </span>
+                      <span className="text-[15px] leading-[1.45] text-[color:var(--c2-muted)] lg:col-span-5 lg:col-start-7 lg:text-balance lg:text-[18px] lg:leading-[1.5] lg:text-[color:var(--c2-ink)]">
+                        {k.punkte.map((p, i) => (
+                          <Fragment key={p}>
+                            <span className="whitespace-nowrap">
+                              {p}
+                              {i < k.punkte.length - 1 ? ' ·' : ''}
+                            </span>
+                            {i < k.punkte.length - 1 ? ' ' : ''}
+                          </Fragment>
+                        ))}
+                      </span>
+                    </span>
+                    <span className="flex lg:col-start-12 lg:justify-self-end">
+                      <Pfeil size={20} strokeWidth={2.2} className="lg:hidden" />
+                      <Pfeil size={28} strokeWidth={2.5} className="hidden lg:block" />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* ============ REFERENZEN ============ */}
+          <section id="referenzen" aria-labelledby="c2-ref" className="flex flex-col px-[24px] pb-[56px] pt-[16px] lg:px-[80px] lg:pb-[120px] lg:pt-0">
+            <RisoFilterDefs />
+            <SektionsKopf rubrik={t.referenzen.rubrik} id="c2-ref" zeilen={t.referenzen.titelZeilen} text={t.referenzen.text} linkHref="/referenzen" linkText={t.referenzen.alle} />
+            <div className="mt-[20px] flex">
+              <RisoUmschalter riso={riso} onToggle={() => setRiso((r) => !r)} labelOn={t.referenzen.originalfarben} labelOff={t.referenzen.risodruck} />
+            </div>
+            <div className="mt-[20px] grid grid-cols-2 gap-x-[12px] gap-y-[24px] lg:mt-[36px] lg:grid-cols-3 lg:gap-[24px]">
+              {PROJEKTE.map((p) => (
+                <RisoKachel
+                  key={p.slug}
+                  href={`/referenzen/${p.slug}`}
+                  src={p.src}
+                  alt={en ? p.altEn : p.altDe}
+                  name={p.name}
+                  crop={p.crop}
+                  objectPosition={p.pos}
+                  riso={riso}
+                />
+              ))}
+            </div>
+            <div className="mt-[28px] flex lg:hidden">
+              <Link href="/referenzen" className="c2-pill-line inline-flex h-[52px] items-center justify-center whitespace-nowrap rounded-full px-[24px] text-[17px] font-semibold leading-none no-underline">
+                {t.referenzen.alle}
+              </Link>
+            </div>
+          </section>
+
+          {/* ============ BASIS (Tintenfeld) ============ */}
+          <section aria-labelledby="c2-basis" className="px-[16px]">
+            <EtikettFeld
+              color="var(--c2-ink-field)"
+              textColor="var(--c2-on-ink)"
+              dark
+              tab={{ h: 44, pl: 20, pr: 32 }}
+              tabLg={{ h: 64, pl: 64, pr: 40 }}
+              etikett={<p className="m-0 whitespace-nowrap text-[13px] font-semibold leading-none lg:text-[16px]">{t.basis.rubrik}</p>}
+            >
+              <div className="flex flex-col px-[24px] pb-[40px] pt-[76px] lg:px-[64px] lg:pb-[97px] lg:pt-[112px]">
+                <h2 id="c2-basis" className={`${H2_SCHARF} text-balance text-[28px] leading-[1.06] tracking-[-0.025em] lg:whitespace-nowrap lg:text-[length:min(56px,3.889vw)] lg:leading-[1.02]`}>
+                  <Zeilen zeilen={t.basis.titelZeilen} />
+                </h2>
+                <ol className="m-0 mt-[24px] list-none p-0 lg:mt-[56px] lg:grid lg:grid-cols-2 lg:gap-x-[24px] lg:gap-y-[40px]">
+                  {t.basis.punkte.map((b, i) => (
+                    <li key={b.titel} className="flex flex-col gap-[8px] border-t pb-[22px] pt-[20px] lg:gap-[12px] lg:pb-0 lg:pt-[28px]" style={{ borderColor: 'var(--c2-ink-field-line)' }}>
+                      <span aria-hidden className="text-[36px] font-extrabold leading-none tracking-[-0.03em] [font-variation-settings:'SHRP'_100] lg:text-[48px] lg:tracking-[-0.02em]" style={{ color: 'var(--c2-orchid)', fontVariantNumeric: 'tabular-nums' }}>
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <h3 className="m-0 mt-[4px] text-[21px] font-bold leading-[1.2] [font-variation-settings:'SHRP'_50] lg:mt-0 lg:text-[28px] lg:tracking-[-0.01em]">{b.titel}</h3>
+                      <p className="m-0 text-pretty text-[16px] leading-[1.55] lg:max-w-[46ch] lg:text-[18px]" style={{ color: 'var(--c2-muted-on-ink)' }}>
+                        {b.text}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </EtikettFeld>
+          </section>
+
+          {/* ============ ANSPRUCH (Orchidee) ============ */}
+          <section aria-labelledby="c2-ansp" className="px-[16px] pt-[16px]">
+            <EtikettFeld
+              color="var(--c2-orchid)"
+              textColor="var(--c2-field-text)"
+              tab={{ h: 44, pl: 20, pr: 32 }}
+              tabLg={{ h: 64, pl: 64, pr: 40 }}
+              etikett={<p className="m-0 whitespace-nowrap text-[13px] font-semibold leading-none lg:text-[16px]">{t.anspruch.rubrik}</p>}
+            >
+              <div className="px-[24px] pb-[40px] pt-[76px] lg:px-[64px] lg:pb-[90px] lg:pt-[136px]">
+                <h2 id="c2-ansp" className={`${H2_SCHARF} text-balance text-[36px] leading-[1.06] tracking-[-0.025em] lg:whitespace-nowrap lg:text-[length:min(112px,7.778vw)] lg:leading-[0.96] lg:tracking-[-0.03em]`}>
+                  <Zeilen zeilen={t.anspruch.titelZeilen} />
+                </h2>
+              </div>
+            </EtikettFeld>
+          </section>
+
+          {/* ============ FAQ ============ */}
+          <section id="faq" aria-labelledby="c2-faq" className="flex flex-col px-[24px] pb-[40px] pt-[56px] lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-[24px] lg:px-[80px] lg:py-[120px]">
+            <h2 id="c2-faq" className={`${H2_SCHARF} text-balance text-[30px] leading-[1.06] tracking-[-0.025em] lg:col-span-4 lg:whitespace-nowrap lg:text-[length:min(48px,3.333vw)] lg:leading-[1.05]`}>
+              <Zeilen zeilen={t.faq.titelZeilen} />
+            </h2>
+            <div className="mt-[24px] border-b-2 lg:col-span-7 lg:col-start-6 lg:mt-0" style={{ borderColor: 'var(--c2-ink)' }}>
+              {t.faq.eintraege.map((f) => (
+                <details key={f.frage} className="c2-motion border-t-2" style={{ borderColor: 'var(--c2-ink)' }}>
+                  <summary className="flex min-h-[64px] cursor-pointer items-center justify-between gap-[16px] py-[14px] text-[18px] font-semibold leading-[1.3] lg:h-[78px] lg:min-h-0 lg:gap-[24px] lg:py-0 lg:text-[22px] lg:leading-[1.2]">
+                    <span>{f.frage}</span>
+                    <Plus size={20} strokeWidth={2.4} className="transition-transform duration-200 lg:hidden" />
+                    <Plus size={24} strokeWidth={2.5} className="hidden transition-transform duration-150 ease-out lg:block" />
+                  </summary>
+                  <p className="m-0 mb-[20px] text-pretty text-[16px] leading-[1.55] lg:mb-[28px] lg:max-w-[600px] lg:text-[18px] lg:text-[color:var(--c2-muted)]">{f.antwort}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+
+          {/* ============ KONTAKT ============ */}
+          <section id="kontakt" aria-labelledby="c2-kontakt" className="flex flex-col px-[24px] pb-[56px] pt-[40px] lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-[24px] lg:px-[80px] lg:pb-[120px] lg:pt-0">
+            <div className="flex flex-col lg:col-span-6 lg:gap-[28px]">
+              <h2 id="c2-kontakt" className={`${H2_SCHARF} text-balance text-[32px] leading-[1.06] tracking-[-0.025em] lg:whitespace-nowrap lg:text-[length:min(52px,3.611vw)] lg:leading-[1.04]`}>
+                <Zeilen zeilen={t.kontakt.titelZeilen} />
+              </h2>
+              <p className="m-0 mt-[16px] text-pretty text-[18px] leading-[1.55] lg:mt-0 lg:max-w-[520px] lg:text-[20px] lg:leading-[1.5]">
+                {t.kontakt.textVor}
+                <span className="whitespace-nowrap">{t.kontakt.textNowrap}</span>
+                {t.kontakt.textNach}
+              </p>
+            </div>
+            <Kontaktformular t={t.kontakt} />
+          </section>
+        </main>
+
+        <StartFuss t={t} thema={thema} onThema={umschalten} />
+      </div>
+
+      <MobilMenue offen={menue} onSchliessen={menueZu} punkte={[...hauptnav, kontaktLink]} kontakt={kontaktLink} t={t} thema={thema} onThema={umschalten} />
+    </div>
+  )
+}

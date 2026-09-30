@@ -1,0 +1,185 @@
+/*
+ * C2 „Farbe bekennen“ – Design-Tokens für die ecommlab-Startseite
+ *
+ * Einbinden: als styles/c2-tokens.css ablegen und in pages/_app.tsx DIREKT NACH globals.css importieren:
+ *   import '../styles/globals.css'
+ *   import '../styles/c2-tokens.css'
+ * (Reihenfolge wichtig: Die Regeln hier müssen NACH Tailwinds @layer base stehen, siehe „Seitenrahmen“ unten.)
+ *
+ * Alle Farbpaare sind nach WCAG 2.x geprüft; die Kontrastwerte stehen dabei.
+ */
+
+:root {
+  /* Grund & Flächen */
+  --c2-paper: #F4EEE5;        /* Seitengrund = Farbe jedes Etiketts                 */
+  --c2-surface: #FBF8F3;      /* Formularplatte, Eingabefelder, Text auf Tinten-Pillen */
+  --c2-raised: #FEFCF9;
+  --c2-ink: #1F1A15;          /* Text, Tinten-Pillen · 14,96:1 auf paper             */
+  --c2-ink-hover: #3A322A;    /* Hover der Tinten-Pille; Trennlinien auf Tinte       */
+  --c2-muted: #63594F;        /* Sekundärtext – NUR auf Papier · 5,93:1               */
+  --c2-muted-on-ink: #B3A99E; /* Sekundärtext auf Tintenfeldern · 7,47:1              */
+  --c2-line: #D9CFC3;         /* Bild-Platzhalter, dekorative Linien                  */
+  --c2-ink-field: #1F1A15;    /* Tintenfelder (Basis, Fuß) – in BEIDEN Modi dunkel    */
+  --c2-ink-field-line: #3A322A; /* Trennlinien innerhalb von Tintenfeldern            */
+  --c2-ink-field-border: transparent;
+  --c2-on-ink: #F4EEE5;       /* Text auf Tintenfeldern – in BEIDEN Modi hell          */
+  --c2-field-text: #1F1A15;   /* Text/Pillen auf Orchidee – in BEIDEN Modi Tinte      */
+  --c2-field-pill-text: #FBF8F3;
+
+  /* Markenfeld ecommlab */
+  --c2-orchid: #D671C2;       /* Farbfeld · Tinte darauf 5,75:1 – NIE weiße Schrift   */
+  --c2-orchid-text: #913F82;  /* „Pflaume“: Akzent als Text mit Papier 5,62:1          */
+  --c2-orchid-soft: #FADEF3;  /* Hover-Grund der Leistungszeilen                       */
+
+  /* Bewegung */
+  --c2-ease-out: cubic-bezier(.2, .7, .2, 1);
+  --c2-ease-stanz: cubic-bezier(.7, 0, .2, 1);
+  --c2-ease-snap: cubic-bezier(.3, 1.4, .5, 1);
+}
+
+/* Dunkelmodus (die Seite nutzt html.dark, siehe pages/_document.tsx + Theme-Umschalter) */
+html.dark {
+  --c2-paper: #17130F;        /* damit werden auch die Etiketten dunkel               */
+  --c2-surface: #221D18;
+  --c2-raised: #2A241E;
+  --c2-ink: #F4EEE5;          /* Text · 16,02:1 auf #17130F                            */
+  --c2-ink-hover: #D9CFC3;
+  --c2-muted: #B3A99E;        /* 7,99:1                                                */
+  --c2-line: #3A322A;
+  --c2-orchid-text: #DD8ACB;  /* 7,54:1                                                */
+  --c2-orchid-soft: #3B2436;  /* Hover-Grund dunkel · Text #F4EEE5 darauf 12:1         */
+  --c2-ink-field-border: #3A322A; /* Tintenfelder bekommen im Dunkelmodus eine 1,5-px-Kante */
+  /* WICHTIG: var(--c2-ink) kippt im Dunkelmodus auf hell (Text, Pillen invertieren sich).
+     Auf Orchidee deshalb IMMER var(--c2-field-text) / var(--c2-field-pill-text),
+     auf Tintenfeldern IMMER var(--c2-on-ink) / var(--c2-muted-on-ink). */
+}
+
+/* ---------- Keyframes (Namen wie im Canvas-Board) ---------- */
+@keyframes c2-rise   { from { opacity: 0; transform: translateX(var(--c2-rise-x, -24px)) } to { opacity: 1; transform: none } }
+@keyframes c2-fade   { from { opacity: 0 } to { opacity: 1 } }
+@keyframes c2-stanz  { from { transform: scale(1) } to { transform: scale(0) } }
+@keyframes c2-etikett-in { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: none } }
+@keyframes c2-roll   { from { transform: translateY(var(--c2-roll-from)) } to { transform: translateY(var(--c2-roll-to)) } }
+@keyframes c2-linie  { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+@keyframes c2-plus   { from { opacity: 0; transform: translateY(var(--c2-plus-y, -12px)) } to { opacity: 1; transform: none } }
+@keyframes c2-menu   { from { opacity: 0; transform: translateY(-8px) } to { opacity: 1; transform: none } }
+
+@media (prefers-reduced-motion: reduce) {
+  .c2-motion, .c2-motion *, .c2-motion *::before, .c2-motion *::after { animation: none !important; transition: none !important; }
+  [data-c2-shrp] { font-variation-settings: 'SHRP' 100 !important; }
+}
+
+/* ---------- Seitenrahmen der Startseite ----------
+ * <div className={`c2-seite ${geologica.variable}`}> um die ganze Startseite legen.
+ * WICHTIG: styles/globals.css setzt in @layer base  h1,h2,h3 { font-display }  (Funnel Display) und  p { leading-7 }.
+ * Ohne die :where-Regeln unten erscheinen alle Überschriften in Funnel Display und alle Absätze mit 28 px Zeilenhöhe.
+ * :where(...) hält die Spezifität bei 0,0,1 → schlägt die Basis-Regeln (steht später), verliert aber gegen jede Tailwind-Utility.
+ */
+.c2-seite {
+  position: relative;
+  font-family: var(--font-geologica), 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  font-variation-settings: 'SHRP' 0;
+  background: var(--c2-paper);
+  color: var(--c2-ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+:where(.c2-seite) h1, :where(.c2-seite) h2, :where(.c2-seite) h3, :where(.c2-seite) h4 { font-family: inherit; }
+:where(.c2-seite) p { line-height: inherit; }
+:where(.c2-seite) a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+:where(.c2-seite) a:hover { text-decoration-thickness: 4px; }
+:where(.c2-seite) :focus-visible { outline: 3px solid var(--c2-ink); outline-offset: 3px; }
+:where(.c2-seite) [data-auf-farbe] :focus-visible { outline-color: var(--c2-field-text); }
+:where(.c2-seite) [data-dark] :focus-visible { outline-color: var(--c2-on-ink); }
+:where(.c2-seite) [data-dark] a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+:where(.c2-seite) summary { list-style: none; }
+:where(.c2-seite) summary::-webkit-details-marker { display: none; }
+:where(.c2-seite) details[open] > summary > svg { transform: rotate(45deg); }
+.c2-seite input::placeholder, .c2-seite textarea::placeholder { color: var(--c2-muted); opacity: 1; } /* schlägt Tailwinds Preflight (#9ca3af) */
+
+/* ---------- Etikett-Geometrie (von <EtikettFeld> genutzt) ----------
+ * Mobil (< 1024 px): Feldradius 28, Etikett-Rundung 16 · Desktop (≥ 1024 px): Feldradius 40, Etikett-Rundung 24
+ * Das Etikett ist so breit wie sein Inhalt + Innenabstand (--c2-tab-pl / --c2-tab-pr) → passt für DE und EN.
+ * Höhe: --c2-tab-h / --c2-tab-h-lg.  Die zwei Außenrundungen des Feldes sind ::before / ::after des Etiketts.
+ */
+.c2-field { --c2-r: 28px; --c2-tr: 16px; position: relative; overflow: hidden; border-radius: 0 var(--c2-r) var(--c2-r) var(--c2-r); isolation: isolate; }
+.c2-tab {
+  position: absolute; left: 0; top: 0; z-index: 3;
+  display: flex; align-items: center; box-sizing: border-box;
+  height: var(--c2-tab-h);
+  padding: 0 var(--c2-tab-pr) 0 var(--c2-tab-pl);
+  background: var(--c2-paper); color: var(--c2-ink);
+  border-bottom-right-radius: var(--c2-tr);
+  transition: height 200ms var(--c2-ease-out);
+}
+.c2-tab::before, .c2-tab::after {
+  content: ''; position: absolute; width: var(--c2-tr); height: var(--c2-tr); pointer-events: none;
+  background: radial-gradient(circle at 100% 100%, transparent calc(var(--c2-tr) - .5px), var(--c2-paper) var(--c2-tr));
+}
+.c2-tab::before { left: 100%; top: 0; }
+.c2-tab::after { left: 0; top: 100%; }
+.c2-tab-inhalt { position: relative; z-index: 2; display: flex; align-items: center; }
+/* Stanz-Auftakt (nur Hero): Feldfarbe deckt das Etikett ab und wird zur Ecke oben links „ausgestanzt“ */
+.c2-stanz {
+  position: absolute; left: 0; top: 0; z-index: 1;
+  right: calc(-1 * var(--c2-tr)); bottom: calc(-1 * var(--c2-tr));
+  border-top-left-radius: var(--c2-r);
+  transform: scale(0); transform-origin: 0 0;
+  animation: c2-stanz 420ms var(--c2-ease-stanz) 180ms both; pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .c2-field { --c2-r: 40px; --c2-tr: 24px; }
+  .c2-tab { height: var(--c2-tab-h-lg, var(--c2-tab-h)); padding: 0 var(--c2-tab-pr-lg, var(--c2-tab-pr)) 0 var(--c2-tab-pl-lg, var(--c2-tab-pl)); }
+}
+/* „Lasche“: das Etikett gibt bei Hover/Fokus des Logos 8 px nach (nur Desktop, nur mit Bewegung) */
+@media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .c2-field[data-lasche="true"] > .c2-tab { height: calc(var(--c2-tab-h-lg, var(--c2-tab-h)) + 8px); }
+}
+
+/* Riso-Umschalter nur auf Touch-Geräten zeigen (Desktop: Farbe flutet bei Hover) */
+@media (hover: hover) and (pointer: fine) { .c2-riso-toggle { display: none !important; } }
+
+/* Hero-Treppe: Schriftgröße, Stufe (Anteil der Schriftgröße), Grundeinzug, Auftrittsweg */
+.c2-treppe { --c2-hero-fs: 60px; --c2-treppe-stufe: .47em; --c2-treppe-basis: 0px; --c2-rise-x: -16px; }
+@media (min-width: 1024px) { .c2-treppe { --c2-hero-fs: clamp(120px, 12.8vw, 184px); --c2-treppe-stufe: 1.18em; --c2-treppe-basis: 64px; --c2-rise-x: -24px; } }
+
+/* Leistungszeilen (Register): Hover-Grund + Pfeil schiebt 4 px */
+.c2-reg { transition: background-color 150ms ease-out; }
+.c2-reg svg { transition: transform 200ms ease-out; }
+@media (hover: hover) { .c2-reg:hover { background: var(--c2-orchid-soft); } .c2-reg:hover svg { transform: translateX(4px); } }
+
+/* Pillen */
+.c2-pill-ink { background: var(--c2-ink); color: var(--c2-surface); transition: background-color 150ms ease-out; }
+.c2-pill-ink:hover { background: var(--c2-ink-hover); }
+.c2-pill-line { background: transparent; color: var(--c2-ink); box-shadow: inset 0 0 0 2px var(--c2-ink); transition: background-color 150ms ease-out; }
+.c2-pill-line:hover { background: rgba(31, 26, 21, .08); }
+html.dark .c2-pill-line:hover { background: rgba(244, 238, 229, .10); }
+/* Pillen AUF der Orchidee bleiben in beiden Modi tintenfarben */
+.c2-pill-feld { background: var(--c2-field-text); color: var(--c2-field-pill-text); transition: background-color 150ms ease-out; }
+.c2-pill-feld:hover { background: #3A322A; }
+.c2-pill-feld-line { background: transparent; color: var(--c2-field-text); box-shadow: inset 0 0 0 2px var(--c2-field-text); transition: background-color 150ms ease-out; }
+.c2-pill-feld-line:hover { background: rgba(31, 26, 21, .08); }
+
+/* Überscroll-Bereich (Gummiband auf Mac/iOS) auf der Startseite in Papierfarbe statt Weiß */
+body:has(.c2-seite) { background: var(--c2-paper); }
+
+/* ---------- Unterseiten ---------- */
+:root {
+  --c2-pflaume: #913F82;      /* Farbfeld Karriere/Stellen · Papier-Text darauf 5,4:1 – in BEIDEN Modi gleich */
+}
+/* Pillen auf dunklen Feldern (Tinte, Pflaume): Papier bzw. Papier-Umriss – in beiden Modi hell */
+.c2-pill-papier { background: #FBF8F3; color: #1F1A15; transition: background-color 150ms ease-out; }
+.c2-pill-papier:hover { background: #E9E1D6; }
+.c2-pill-papier-line { background: transparent; color: #F4EEE5; box-shadow: inset 0 0 0 2px #F4EEE5; transition: background-color 150ms ease-out; }
+.c2-pill-papier-line:hover { background: rgba(244, 238, 229, .12); }
+/* Unterstrichene Textlinks (z. B. „Alle Leistungen“, „Zurück zu …“) */
+.c2-textlink { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.c2-textlink:hover { text-decoration-thickness: 4px; }
+/* Etikett nur ab 1024 px (Board C2m: Tintenfelder der Unterseiten mobil ohne Etikett, alle Ecken rund) */
+@media (max-width: 1023.98px) {
+  .c2-field[data-tab-nur-lg="true"] { border-radius: var(--c2-r); }
+  .c2-field[data-tab-nur-lg="true"] > .c2-tab { display: none; }
+}
+/* Riesenziffer des Signal-Registers (Stellenseiten) */
+@keyframes c2-ziffer { from { transform: translateY(40%) } to { transform: none } }

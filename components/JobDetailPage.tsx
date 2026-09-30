@@ -1,117 +1,170 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ButtonLink } from './ButtonLink'
-import { Container } from './Container'
-import { SiteHeader } from './SiteHeader'
-import type { JobPosting } from '../lib/jobs'
-import { normalizeLocale, tr } from '../lib/i18n'
+import { H_HALB, H_SCHARF, Pille, ZurueckLink } from './c2/Bausteine'
+import { Plus } from './c2/Icons'
+import { SchaerfeTitel, heroFadeDelay } from './c2/SchaerfeTitel'
+import { SeitenRahmen } from './c2/SeitenRahmen'
+import { Signalregister } from './c2/Signalregister'
+import { Fliesstext, TitelWort, satz } from '../lib/c2Text'
+import { normalizeLocale } from '../lib/i18n'
+import type { JobPosting, JobSection } from '../lib/jobs'
+import { karriere as t, pick } from '../lib/unterseitenInhalt'
 
-function Bullets({ items, locale }: { items: readonly { de: string; en: string }[]; locale: 'de' | 'en' }) {
+/** Punkte bzw. Absätze eines Stellenabschnitts (Desktop 18 px zweispaltig, mobil 16 px einspaltig) */
+function Liste({ s, gross, locale }: { s: JobSection; gross: boolean; locale: 'de' | 'en' }) {
   return (
-    <ul className="mt-4 grid gap-2 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-      {items.map((item) => (
-        <li key={item.de} className="flex gap-3">
-          <span className="mt-2 h-2 w-2 flex-none rounded-full bg-zinc-300 dark:bg-zinc-700" />
-          <span>{item[locale]}</span>
-        </li>
-      ))}
-    </ul>
+    s.type === 'bullets' ? (
+      <ul className={`m-0 list-none p-0 ${gross ? 'text-[18px] leading-[1.5] [column-count:2] [column-gap:24px]' : 'flex flex-col gap-[10px] text-[16px] leading-[1.5]'}`}>
+        {s.items.map((it) => (
+          <li key={it.de} className={`flex gap-[10px] ${gross ? 'mb-[12px] [break-inside:avoid]' : ''}`}>
+            <span aria-hidden className="flex-none font-semibold">
+              –
+            </span>
+            <span className="text-pretty">
+              <Fliesstext text={it[locale]} />
+            </span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div className={gross ? 'flex flex-col gap-[12px] text-[18px] leading-[1.5]' : 'flex flex-col gap-[10px] text-[16px] leading-[1.5]'}>
+        {s.items.map((it) => (
+          <p key={it.de} className="m-0 text-pretty">
+            <Fliesstext text={it[locale]} />
+          </p>
+        ))}
+      </div>
+    )
   )
 }
 
+/**
+ * /karriere/<slug> (3 Stellen) – Board „C2plus-ecommlab-Stelle-*“ / „C2m-ecommlab-Stelle-*“. Farbe Pflaume.
+ * Hero: Zurück-Link, Stellentitel (72 px), Papier-Pille „Bewerben“ (mailto mit Betreff) · Einleitung (Lead) ·
+ * Desktop: Signal-Register mit drei Reitern · mobil: Akkordeon (erster Abschnitt offen) ·
+ * Bewerben (Desktop Papier-Band, mobil Tintenkasten). Inhalte aus lib/jobs.ts.
+ */
 export function JobDetailPage({ job }: { job: JobPosting }) {
   const router = useRouter()
   const locale = normalizeLocale(router.locale)
+  const titel = satz(job.title[locale])
+  const betreff = `mailto:${job.applyEmail}?subject=${encodeURIComponent(`${pick(locale, t.betreff)}: ${titel}`)}`
+  const mail = `mailto:${job.applyEmail}`
+
+  const abschnitte = job.sections.filter((s) => s.title)
 
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-
-      <main>
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.14),transparent_55%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.14),transparent_55%),radial-gradient(circle_at_50%_75%,rgba(24,24,27,0.10),transparent_60%)] dark:bg-[radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.20),transparent_55%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.20),transparent_55%),radial-gradient(circle_at_50%_75%,rgba(255,255,255,0.10),transparent_60%)]"
+    <SeitenRahmen
+      feld="pflaume"
+      bereich="/karriere"
+      aktivTyp="true"
+      heroLabelledBy="c2-h1"
+      heroKlasse="flex flex-col px-[24px] pb-[32px] pt-[104px] lg:px-[64px] lg:pb-[74px] lg:pt-[131px]"
+      hero={(feldRef) => (
+        <>
+          <ZurueckLink href="/karriere" style={{ animation: 'c2-fade 300ms ease-out 180ms both' }}>
+            {pick(locale, t.zurueck)}
+          </ZurueckLink>
+          <SchaerfeTitel
+            id="c2-h1"
+            areaRef={feldRef}
+            woerter
+            frei
+            zeilen={titel.split(' ').map((w, i) => <TitelWort key={i} wort={w} />)}
+            className="mt-[16px] text-[34px] leading-[1.04] tracking-[-0.03em] lg:mt-[23px] lg:max-w-[min(1080px,75vw)] lg:text-[length:min(72px,5vw)] lg:leading-none"
           />
+          <div className="mt-[24px] flex lg:mt-[48px]" style={{ animation: `c2-fade 300ms ease-out ${heroFadeDelay(2)}ms both` }}>
+            <Pille href={betreff} art="papier" voll>
+              {pick(locale, t.bewerben)}
+            </Pille>
+          </div>
+        </>
+      )}
+    >
+      {/* ============ EINLEITUNG ============ */}
+      <div className="flex flex-col px-[24px] pb-[24px] pt-[40px] lg:grid lg:grid-cols-12 lg:gap-x-[24px] lg:px-[80px] lg:pb-[64px] lg:pt-[120px]">
+        <div className="flex flex-col gap-[14px] lg:col-span-8 lg:gap-[16px]">
+          {job.intro.map((p, i) => (
+            <p
+              key={p.de}
+              className={`m-0 text-pretty lg:text-[24px] lg:font-medium lg:leading-[1.45] ${i === 0 ? 'text-[18px] font-medium leading-[1.5]' : 'text-[17px] leading-[1.5]'}`}
+            >
+              <Fliesstext text={p[locale]} />
+            </p>
+          ))}
+        </div>
+      </div>
 
-          <Container>
-            <div className="py-14 sm:py-18">
-              <Link
-                href="/karriere"
-                className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
-              >
-                ← {tr(locale, 'Zurück zur Karriereübersicht', 'Back to careers')}
-              </Link>
-
-              <h1 className="mt-4 max-w-4xl text-balance text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl dark:text-white">
-                {job.title[locale]}
-              </h1>
-              <div className="mt-6 space-y-4 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                {job.intro.map((p) => (
-                  <p key={p.de}>{p[locale]}</p>
-                ))}
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <ButtonLink href={`mailto:${job.applyEmail}`}>{tr(locale, 'Bewerben', 'Apply')}</ButtonLink>
-                <ButtonLink
-                  href={`mailto:${job.applyEmail}?subject=${encodeURIComponent(
-                    tr(locale, `Bewerbung: ${job.title.de}`, `Application: ${job.title.en}`),
-                  )}`}
-                  variant="secondary"
-                >
-                  {tr(locale, 'Mit Betreff öffnen', 'Open with subject')}
-                </ButtonLink>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="grid gap-4 lg:grid-cols-3">
-              {job.sections.map((s) => (
-                <div
-                  key={s.title?.de ?? s.type}
-                  className="rounded-3xl border border-zinc-200 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8"
-                >
-                  {s.title ? (
-                    <h2 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                      {s.title[locale]}
-                    </h2>
-                  ) : null}
-                  {s.type === 'bullets' ? <Bullets items={s.items} locale={locale} /> : null}
-                  {s.type === 'paragraphs' ? (
-                    <div className="mt-4 space-y-4 text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                      {s.items.map((p) => (
-                        <p key={p.de}>{p[locale]}</p>
-                      ))}
-                    </div>
-                  ) : null}
+      {/* ============ ABSCHNITTE: Desktop Signal-Register ============ */}
+      <div className="hidden px-[80px] pb-[120px] lg:block">
+        <Signalregister
+          idPrefix="c2-stelle"
+          labelledBy="c2-h1"
+          tabs={abschnitte.map((s) => ({
+            titel: s.title ? s.title[locale] : '',
+            inhalt: (
+              <div className="grid grid-cols-12 items-start gap-x-[24px]">
+                <h2 className={`${H_HALB} col-span-4 text-balance text-[36px] leading-[1.1] tracking-[-0.015em]`}>{s.title ? s.title[locale] : ''}</h2>
+                <div className="col-span-8 col-start-5">
+                  <Liste s={s} gross locale={locale} />
                 </div>
-              ))}
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-8 dark:border-zinc-800 dark:bg-zinc-900/30 sm:p-10">
-              <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                {tr(locale, 'Bewerben', 'Apply')}
-              </h2>
-              <p className="mt-2 max-w-2xl text-base leading-7 text-zinc-600 dark:text-zinc-300">
-                {tr(locale, 'Bewerbe dich unter ', 'Apply via ')}
-                <span className="font-semibold">{job.applyEmail}</span>.
-              </p>
-              <div className="mt-6">
-                <ButtonLink href={`mailto:${job.applyEmail}`}>{tr(locale, 'E-Mail schreiben', 'Send email')}</ButtonLink>
               </div>
+            ),
+          }))}
+        />
+      </div>
+
+      {/* ============ ABSCHNITTE: mobil Akkordeon ============ */}
+      <div className="px-[24px] pb-[40px] pt-[16px] lg:hidden">
+        <div className="border-b-2" style={{ borderColor: 'var(--c2-ink)' }}>
+          {abschnitte.map((s, i) => (
+            <details key={s.title?.de ?? i} open={i === 0} className="c2-motion border-t-2" style={{ borderColor: 'var(--c2-ink)' }}>
+              <summary className="flex min-h-[64px] cursor-pointer items-center justify-between gap-[16px]">
+                <span className="flex items-center gap-[12px]">
+                  <span aria-hidden className="flex h-[28px] w-[28px] items-center justify-center rounded-full text-[15px] font-bold" style={{ background: 'var(--c2-ink)', color: 'var(--c2-surface)' }}>
+                    {i + 1}
+                  </span>
+                  <span className="text-[20px] font-bold leading-[1.2]">{s.title ? s.title[locale] : ''}</span>
+                </span>
+                <Plus size={20} strokeWidth={2.4} className="transition-transform duration-200" />
+              </summary>
+              <div className="mb-[20px]">
+                <Liste s={s} gross={false} locale={locale} />
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      {/* ============ BEWERBEN ============ */}
+      <section aria-labelledby="c2-bewerben" className="px-[24px] pb-[56px] lg:px-[80px] lg:pb-[120px]">
+        <div
+          data-dark=""
+          className="flex flex-col rounded-[24px] bg-[color:var(--c2-ink-field)] px-[24px] py-[28px] text-[#F4EEE5] lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-[24px] lg:rounded-none lg:bg-transparent lg:p-0 lg:text-[color:var(--c2-ink)]"
+        >
+          <h2 id="c2-bewerben" className={`${H_SCHARF} text-[28px] leading-[1.06] lg:col-span-7 lg:whitespace-nowrap lg:text-[length:min(56px,3.889vw)] lg:leading-[1.02] lg:tracking-[-0.025em]`}>
+            {pick(locale, t.bewerben)}
+          </h2>
+          <div className="flex flex-col items-start lg:col-span-4 lg:col-start-9 lg:gap-[24px]">
+            <p className="m-0 mt-[12px] text-pretty text-[17px] leading-[1.5] lg:mt-0 lg:text-[19px]">
+              {pick(locale, t.bewirbDich)}{' '}
+              <a href={mail} className="c2-textlink font-bold lg:font-semibold">
+                {job.applyEmail}
+              </a>
+              .
+            </p>
+            <div className="mt-[20px] flex w-full lg:hidden">
+              <Pille href={mail} art="papier" voll>
+                {pick(locale, t.emailSchreiben)}
+              </Pille>
             </div>
-          </Container>
-        </section>
-      </main>
-    </div>
+            <div className="hidden lg:flex">
+              <Pille href={mail} art="ink">
+                {pick(locale, t.emailSchreiben)}
+              </Pille>
+            </div>
+          </div>
+        </div>
+      </section>
+    </SeitenRahmen>
   )
 }
-

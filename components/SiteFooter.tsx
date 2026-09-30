@@ -5,7 +5,7 @@ import { normalizeLocale, tr } from '../lib/i18n'
 
 declare global {
   interface Window {
-    consentok?: { renew?: () => void }
+    consentok?: { showSettings?: () => void; renew?: () => void }
   }
 }
 
@@ -43,7 +43,9 @@ export function SiteFooter() {
               href="#"
               onClick={(event) => {
                 event.preventDefault()
-                window.consentok?.renew?.()
+                const api = window.consentok
+                if (api?.showSettings) api.showSettings()
+                else api?.renew?.()
               }}
             >
               {tr(locale, 'Cookie-Einstellungen', 'Cookie settings')}

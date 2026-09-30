@@ -1,216 +1,146 @@
-import { ecommlabServices } from '../lib/ecommlabContent'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ButtonLink } from './ButtonLink'
-import { Container } from './Container'
-import { ServiceCard } from './ServiceCard'
-import { SiteHeader } from './SiteHeader'
-import { normalizeLocale, tr } from '../lib/i18n'
+import { AbschnittKopf, H_HALB, H_SCHARF, HeroRubrik, KontaktBand, Pille, RegisterPfeil, Zeilen } from './c2/Bausteine'
+import { EtikettFeld } from './c2/EtikettFeld'
+import { SchaerfeTitel, heroFadeDelay } from './c2/SchaerfeTitel'
+import { SeitenRahmen } from './c2/SeitenRahmen'
+import { Fliesstext } from '../lib/c2Text'
+import { normalizeLocale } from '../lib/i18n'
+import { leistungDetails } from '../lib/leistungDetails'
+import { gemeinsam, leistungen as t, leistungsNamen, pick, pickZ } from '../lib/unterseitenInhalt'
 
-function Section({
-  title,
-  body,
-  href,
-  external = false,
-  cta,
-}: {
-  title: string
-  body: string
-  href: string
-  external?: boolean
-  cta: string
-}) {
-  return (
-    <div className="rounded-3xl border border-zinc-200 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <h3 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-          {title}
-        </h3>
-        <ButtonLink href={href} external={external} variant="secondary">
-          {cta}
-        </ButtonLink>
-      </div>
-      <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{body}</p>
-    </div>
-  )
-}
-
+/**
+ * /leistungen – Board „C2plus-ecommlab-Leistungen“ (1440) / „C2m-ecommlab-Leistungen“ (390).
+ * Hero Orchidee (Desktop 590 hoch) · „Alle Leistungen“ als Gruppen-Register · Tintenfeld „Strategisch“ · Erfahrung · Kontaktband.
+ * Kurztexte im Register = Titel der jeweiligen Detailseite (lib/leistungDetails.ts).
+ */
 export function LeistungenPage() {
   const router = useRouter()
   const locale = normalizeLocale(router.locale)
+  const titel = (slug: string) => leistungDetails.find((l) => l.slug === slug)?.title
 
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-
-      <main>
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.14),transparent_55%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.14),transparent_55%),radial-gradient(circle_at_50%_75%,rgba(24,24,27,0.10),transparent_60%)] dark:bg-[radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.20),transparent_55%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.20),transparent_55%),radial-gradient(circle_at_50%_75%,rgba(255,255,255,0.10),transparent_60%)]"
+    <SeitenRahmen
+      feld="orchidee"
+      bereich="/leistungen"
+      heroLabelledBy="c2-h1"
+      heroKlasse="flex flex-col px-[24px] pb-[32px] pt-[104px] lg:px-[64px] lg:pb-[72px] lg:pt-[136px]"
+      hero={(feldRef) => (
+        <>
+          <HeroRubrik hell={false} style={{ animation: 'c2-fade 300ms ease-out 180ms both' }}>
+            {pick(locale, t.rubrik)}
+          </HeroRubrik>
+          <SchaerfeTitel
+            id="c2-h1"
+            areaRef={feldRef}
+            zeilen={pickZ(locale, t.titelZeilen)}
+            className="mt-[20px] text-balance text-[32px] leading-[1.04] tracking-[-0.03em] lg:mt-[28px] lg:text-[length:min(72px,5vw)] lg:leading-none"
           />
-
-          <Container>
-            <div className="py-14 sm:py-18">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                {tr(locale, 'Leistungen', 'Services')}
-              </p>
-              <h1 className="mt-4 max-w-4xl text-balance text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl dark:text-white">
-                {tr(
-                  locale,
-                  'Von Strategie bis Umsetzung – mit Fokus auf Wachstum, Experience und Performance',
-                  'From strategy to delivery — focused on growth, experience and performance',
-                )}
-              </h1>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <ButtonLink href="#ueberblick" variant="secondary">
-                  {tr(locale, 'Überblick', 'Overview')}
-                </ButtonLink>
-                <ButtonLink href="/kontakt">
-                  {tr(locale, 'Kontakt aufnehmen', 'Contact')}
-                </ButtonLink>
-              </div>
+          <div className="mt-[24px] flex flex-col gap-[12px] lg:mt-[48px] lg:flex-row" style={{ animation: `c2-fade 300ms ease-out ${heroFadeDelay(3)}ms both` }}>
+            <Pille href="/kontakt" art="feld" voll>
+              {pick(locale, gemeinsam.kontaktAufnehmen)}
+            </Pille>
+            <Pille href="#ueberblick" art="feld-line" className="hidden lg:inline-flex">
+              {pick(locale, t.ueberblick)}
+            </Pille>
+          </div>
+        </>
+      )}
+    >
+      {/* ============ ALLE LEISTUNGEN ============ */}
+      <section id="ueberblick" aria-labelledby="c2-alle" className="flex flex-col px-[24px] pb-[40px] pt-[48px] lg:px-[80px] lg:py-[120px]">
+        <p className="m-0 text-[14px] font-semibold leading-[1.3] lg:hidden">{pick(locale, t.ueberblick)}</p>
+        <div className="flex flex-col lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-[24px]">
+          <h2 id="c2-alle" className={`${H_SCHARF} mt-[12px] text-[32px] leading-[1.06] tracking-[-0.025em] lg:col-span-7 lg:mt-0 lg:whitespace-nowrap lg:text-[length:min(56px,3.889vw)] lg:leading-[1.02]`}>
+            {pick(locale, t.alleTitel)}
+          </h2>
+          <p className="m-0 mt-[12px] text-pretty text-[17px] leading-[1.55] lg:col-span-4 lg:col-start-9 lg:mt-0 lg:text-[19px] lg:leading-[1.5]">{pick(locale, t.alleText)}</p>
+        </div>
+        <div className="lg:mt-[56px] lg:border-b-2" style={{ borderColor: 'var(--c2-ink)' }}>
+          {t.gruppen.map((g) => (
+            <div key={g.titel.de} className="mt-[28px] flex flex-col lg:mt-0 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-[24px] lg:border-t-2" style={{ borderColor: 'var(--c2-ink)' }}>
+              <h3 className="m-0 mb-[8px] text-[14px] font-semibold leading-[1.3] text-[color:var(--c2-muted)] lg:col-span-4 lg:mb-0 lg:whitespace-nowrap lg:pb-[24px] lg:pt-[28px] lg:text-[36px] lg:font-bold lg:leading-[1.05] lg:tracking-[-0.015em] lg:text-[color:var(--c2-ink)] lg:[font-variation-settings:'SHRP'_50]">
+                <span className="lg:hidden">{pick(locale, g.titel)}</span>
+                <span className="hidden lg:inline">
+                  <Zeilen zeilen={pickZ(locale, g.titelZeilen)} />
+                </span>
+              </h3>
+              <ul className="m-0 list-none border-b-[1.5px] p-0 lg:col-span-8 lg:col-start-5 lg:border-b-0" style={{ borderColor: 'var(--c2-line)' }}>
+                {g.slugs.map((slug, i) => (
+                  <li key={slug} className="block">
+                    <Link
+                      href={`/leistungen/${slug}`}
+                      className={`c2-reg flex items-center gap-[14px] border-t-[1.5px] py-[16px] no-underline lg:grid lg:grid-cols-8 lg:gap-x-[24px] lg:gap-y-0 lg:py-[12px] ${
+                        i === 0 ? 'lg:min-h-[102px] lg:border-t-0' : 'lg:min-h-[104px] lg:border-t-2 lg:!border-t-[color:var(--c2-ink)]'
+                      }`}
+                      style={{ borderColor: 'var(--c2-line)', color: 'var(--c2-ink)' }}
+                    >
+                      <span className="flex flex-1 flex-col gap-[4px] lg:contents">
+                        <span className={`${H_HALB} text-[19px] leading-[1.2] lg:col-span-4 lg:whitespace-nowrap lg:text-[length:min(28px,1.944vw)] lg:leading-[1.1] lg:tracking-[-0.01em]`}>
+                          {pick(locale, leistungsNamen[slug])}
+                        </span>
+                        <span className="text-pretty text-[15px] leading-[1.45] text-[color:var(--c2-muted)] lg:col-span-3 lg:col-start-5 lg:text-[17px] lg:text-[color:var(--c2-ink)]">
+                          <Fliesstext text={pick(locale, titel(slug) ?? { de: '', en: '' })} />
+                        </span>
+                      </span>
+                      <span className="flex lg:col-start-8 lg:justify-self-end">
+                        <RegisterPfeil />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </Container>
-        </section>
+          ))}
+        </div>
+      </section>
 
-        <section id="ueberblick" className="py-14 sm:py-16">
-          <Container>
-            <div className="grid gap-4 lg:grid-cols-3">
-              <Section
-                title={tr(locale, 'E-Commerce', 'E-commerce')}
-                body={tr(
-                  locale,
-                  'Unabhängig davon, ob Sie bereits ein etabliertes Offline-Geschäft und eine starke Marke besitzen, die nach Möglichkeiten sucht, sich erfolgreich in den Online-Bereich zu erweitern, oder ob Sie ein neues Online-Unternehmen sind, das bestrebt ist, eine hochklassige E-Commerce-Plattform zu entwickeln, bietet Ecommlab individuell angepasste Lösungen, die präzise auf Ihre spezifischen Anforderungen abgestimmt sind. Wir verstehen die einzigartigen Herausforderungen und Chancen, die mit der Digitalisierung von Geschäftsmodellen verbunden sind, und sind darauf spezialisiert, maßgeschneiderte, innovative und effiziente Strategien zu entwickeln, um Ihre Online-Präsenz zu optimieren und Ihr Geschäftswachstum zu fördern.',
-                  'Whether you are an established offline business expanding online or a new digital venture building a premium shop, Ecommlab delivers tailored solutions for your exact requirements. We understand the challenges and opportunities of digitizing business models and develop innovative, efficient strategies to optimize your online presence and drive growth.',
-                )}
-                href="/leistungen/e-commerce"
-                cta={tr(locale, 'mehr', 'more')}
-              />
-              <Section
-                title={tr(locale, 'Web Development', 'Web development')}
-                body={tr(
-                  locale,
-                  'Wir bieten umfassende Lösungen im Bereich des digitalen Marketings, die darauf ausgelegt sind, das Wachstum Ihres Unternehmens strategisch zu skalieren. Unsere Dienstleistungen zielen darauf ab, die Sichtbarkeit Ihrer Marke in der digitalen Landschaft deutlich zu steigern und Ihre Kundenbasis nachhaltig zu erweitern. Durch die Integration fortschrittlicher Marketingtechniken und -werkzeuge unterstützen wir Sie dabei, Ihre Online-Präsenz zu optimieren und eine stärkere Marktpräsenz zu etablieren. Unser Ansatz umfasst eine detaillierte Analyse Ihrer Zielgruppen, die Entwicklung maßgeschneiderter Strategien und die Implementierung effektiver Marketingkampagnen, um maximale Ergebnisse zu erzielen und Ihren geschäftlichen Erfolg langfristig zu sichern.',
-                  'We build and scale high-quality webshops and websites that act as your digital storefront. Our approach combines strategy, user-centric design, modern technology, and performance best practices so your platform remains relevant, fast, and scalable as your business grows.',
-                )}
-                href="/leistungen/web-development"
-                cta={tr(locale, 'mehr', 'more')}
-              />
-              <Section
-                title={tr(locale, 'Online Marketing', 'Online marketing')}
-                body={tr(
-                  locale,
-                  'Umfassende digitale Marketinglösungen, die darauf abzielen, Ihr Unternehmen effektiv zu skalieren, die Sichtbarkeit Ihrer Marke signifikant zu steigern und eine kontinuierliche Erweiterung Ihrer Kundenbasis zu fördern. Unsere Strategien sind darauf ausgerichtet, das Wachstum Ihres Geschäfts durch gezielte und innovative Ansätze im Online-Marketing zu beschleunigen, wobei ein besonderer Fokus auf der langfristigen Steigerung der Kundenbindung und der Erhöhung des Markenwerts liegt.',
-                  'We digitalize marketing with a holistic, data-driven approach — from strategy to SEO/SEA and automation. Our goal: grow your brand visibility, acquire customers efficiently, and increase long-term retention and brand value.',
-                )}
-                href="/leistungen/onlinemarketing"
-                cta={tr(locale, 'mehr', 'more')}
-              />
+      {/* ============ STRATEGISCH (Tintenfeld) ============ */}
+      <section aria-labelledby="c2-strat" className="px-[16px]">
+        <EtikettFeld
+          color="var(--c2-ink-field)"
+          textColor="var(--c2-on-ink)"
+          dark
+          tabNurLg
+          tab={{ h: 44, pl: 20, pr: 32 }}
+          tabLg={{ h: 64, pl: 64, pr: 40 }}
+          etikett={<p className="m-0 whitespace-nowrap text-[16px] font-semibold leading-none">{pick(locale, t.strategischRubrik)}</p>}
+        >
+          <div className="flex flex-col px-[24px] py-[40px] lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-[24px] lg:px-[64px] lg:pb-[90px] lg:pt-[112px]">
+            <p className="m-0 text-[14px] font-semibold leading-[1.3] text-[color:var(--c2-muted-on-ink)] lg:hidden">{pick(locale, t.strategischRubrik)}</p>
+            <h2 id="c2-strat" className={`${H_SCHARF} mt-[12px] text-balance text-[28px] leading-[1.06] tracking-[-0.025em] lg:col-span-10 lg:mt-0 lg:whitespace-nowrap lg:text-[length:min(56px,3.889vw)] lg:leading-[1.02]`}>
+              <Zeilen zeilen={pickZ(locale, t.strategischZeilen)} />
+            </h2>
+            <p className="m-0 mt-[14px] text-pretty text-[16px] leading-[1.55] lg:col-span-7 lg:col-start-1 lg:mt-[28px] lg:text-[20px] lg:leading-[1.5] lg:text-[color:var(--c2-muted-on-ink)]">
+              <Fliesstext text={pick(locale, t.strategischText)} />
+            </p>
+            <div className="mt-[20px] flex lg:col-span-4 lg:col-start-1 lg:mt-[40px]">
+              <Pille href="/leistungen/partners-und-tools" art="papier-line">
+                {pick(locale, gemeinsam.mehrErfahren)}
+              </Pille>
             </div>
-          </Container>
-        </section>
+          </div>
+        </EtikettFeld>
+      </section>
 
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="flex items-end justify-between gap-6">
-              <div>
-                <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(locale, 'Alle Leistungen', 'All services')}
-                </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'Schnellzugriff auf die einzelnen Leistungsbereiche.', 'Quick access to all service areas.')}
-                </p>
-              </div>
-            </div>
+      {/* ============ ERFAHRUNG ============ */}
+      <section aria-labelledby="c2-erf" className="px-[24px] pb-[24px] pt-[56px] lg:px-[80px] lg:py-[120px]">
+        <AbschnittKopf
+          id="c2-erf"
+          rubrik={pick(locale, t.erfahrungRubrik)}
+          zeilen={pickZ(locale, t.erfahrungZeilen)}
+          text={<Fliesstext text={pick(locale, t.erfahrungText)} />}
+          link={{ href: '/referenzen', label: pick(locale, gemeinsam.referenzenAnsehen), mobil: 'pille' }}
+        />
+      </section>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {ecommlabServices.map((s) => (
-                <ServiceCard
-                  key={s.href}
-                  title={tr(locale, s.titleDe, s.titleEn)}
-                  description={tr(locale, s.descriptionDe, s.descriptionEn)}
-                  href={s.href}
-                />
-              ))}
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-3xl border border-zinc-200 bg-zinc-50 p-8 dark:border-zinc-800 dark:bg-zinc-900/30 sm:p-10">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'Strategisch', 'Strategy')}
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(locale, 'Strategische Auswahl von Partnern, Systemen und Tools', 'Strategic selection of partners, systems, and tools')}
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                  {tr(
-                    locale,
-                    'Die sorgfältige Auswahl von Partnern, Systemen und Tools im E-Commerce ermöglicht, dass Unternehmen agil, wettbewerbsfähig und kundenorientiert bleiben, was für den langfristigen Erfolg in einem sich schnell entwicknden Markt entscheidend ist.',
-                    'Careful selection of partners, systems, and tools helps you stay agile, competitive, and customer-centric — crucial for long-term success in a fast-moving market.',
-                  )}
-                </p>
-                <div className="mt-6">
-                  <ButtonLink href="/leistungen/partners-und-tools" variant="secondary">
-                    {tr(locale, 'Mehr erfahren', 'Learn more')}
-                  </ButtonLink>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-950 sm:p-10">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-                  {tr(locale, 'Erfahrung', 'Experience')}
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                  {tr(locale, 'Wir verstehen Enterprise und Mittelstand', 'We understand enterprise & SMB')}
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                  {tr(
-                    locale,
-                    'Wir haben mit zahlreichen Enterprise- und Mittelstand-Kunden gearbeitet, für die wir skalierbare Lösungen umgesetzt haben. Diese Skills setzen wir bei all unseren Projekten ein.',
-                    'We’ve worked with many enterprise and SMB clients and delivered scalable solutions. We bring these skills to every single project.',
-                  )}
-                </p>
-                <div className="mt-6">
-                  <ButtonLink href="/referenzen" variant="secondary">
-                    {tr(locale, 'Referenzen ansehen', 'View work')}
-                  </ButtonLink>
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        <section className="py-14 sm:py-16">
-          <Container>
-            <div className="rounded-3xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-950 sm:p-10">
-              <h2 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                {tr(locale, 'Kontaktiere uns', 'Get in touch')}
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                {tr(
-                  locale,
-                  'Wenn du uns sagst, welche Leistungsbereiche du als nächstes ausbauen willst, können wir die passenden nächsten Schritte planen.',
-                  'Tell us which service areas you want to expand next — and we’ll plan the right next steps together.',
-                )}
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <ButtonLink href="/kontakt">
-                  {tr(locale, 'Zum Kontakt', 'Contact')}
-                </ButtonLink>
-                <ButtonLink href="/ecommlab" variant="secondary">
-                  {tr(locale, 'Zur Startseite', 'Back to home')}
-                </ButtonLink>
-              </div>
-            </div>
-          </Container>
-        </section>
-      </main>
-    </div>
+      {/* ============ KONTAKT ============ */}
+      <KontaktBand
+        id="c2-kontakt"
+        zeilen={[pick(locale, gemeinsam.kontaktierenSieUns)]}
+        text={pick(locale, t.kontaktText)}
+        pille={{ href: '/kontakt', label: pick(locale, gemeinsam.zumKontakt) }}
+      />
+    </SeitenRahmen>
   )
 }
-

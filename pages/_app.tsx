@@ -1,10 +1,10 @@
 import '../styles/globals.css'
+import '../styles/c2-tokens.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useRef } from 'react'
 import { BackToTopButton } from '../components/BackToTopButton'
-import { SiteFooter } from '../components/SiteFooter'
 
 function stripQueryAndHash(url: string) {
   return url.split('#')[0]?.split('?')[0] || '/'
@@ -113,7 +113,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <div id="page-top" />
       <Component {...pageProps} />
-      <SiteFooter />
+      {/* Alle Seiten bringen ihren C2-Fuß selbst mit (components/c2/StartFuss.tsx über EcommlabPage bzw. SeitenRahmen) */}
       <BackToTopButton showAfter={180} />
     </>
   )
