@@ -18,22 +18,6 @@ html.dark {
   src: url('/fonts/funnel-display-latin.woff2') format('woff2');
 }
 
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/lato-regular-latin.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/lato-bold-latin.woff2') format('woff2');
-}
-
 html {
   font-size: 18px;
 }

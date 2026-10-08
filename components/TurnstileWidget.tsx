@@ -1,5 +1,5 @@
 import Script from 'next/script'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 declare global {
   interface Window {
@@ -29,10 +29,13 @@ type Props = {
 }
 
 export function TurnstileWidget({ siteKey, theme = 'auto', onToken, onReady, className }: Props) {
+  const wrapRef = useRef<HTMLDivElement | null>(null)
   const hostRef = useRef<HTMLDivElement | null>(null)
   const widgetIdRef = useRef<string | null>(null)
   const onTokenRef = useRef<Props['onToken']>(onToken)
   const onReadyRef = useRef<Props['onReady']>(onReady)
+  // Turnstile weighs several hundred KB; load it only once the form is close to the viewport.
+  const [nah, setNah] = useState(false)
 
   useEffect(() => {
     onTokenRef.current = onToken
@@ -40,6 +43,27 @@ export function TurnstileWidget({ siteKey, theme = 'auto', onToken, onReady, cla
   }, [onReady, onToken])
 
   useEffect(() => {
+    const el = wrapRef.current
+    if (!el || nah) return
+    if (typeof IntersectionObserver === 'undefined') {
+      setNah(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setNah(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '600px 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [nah])
+
+  useEffect(() => {
+    if (!nah) return
     const hostEl = hostRef.current
     if (!hostEl) return
     const host: HTMLDivElement = hostEl
@@ -89,16 +113,18 @@ export function TurnstileWidget({ siteKey, theme = 'auto', onToken, onReady, cla
         // ignore
       }
     }
-  }, [siteKey, theme])
+  }, [nah, siteKey, theme])
 
   return (
     <>
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        strategy="afterInteractive"
-      />
-      <div className={className}>
-        <div ref={hostRef} />
+      {nah ? (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+        />
+      ) : null}
+      <div ref={wrapRef} className={className}>
+        <div ref={hostRef} className="min-h-[65px]" />
       </div>
     </>
   )
