@@ -7,6 +7,12 @@ const nextConfig = {
     locales: ['de', 'en'],
     defaultLocale: 'de',
   },
+  // ConsentOK über die eigene Domain (pages/api/consentok-cs.ts): spart dem
+  // Browser den Verbindungsaufbau zu consentok.eu. Ohne locale:false — in
+  // Next 13.4 verhindert die Option mit i18n, dass die Regel greift.
+  async rewrites() {
+    return [{ source: '/consentok/cs.js', destination: '/api/consentok-cs' }]
+  },
   async redirects() {
     return [
       // Nur Seiten-URLs umleiten, keine Dateien unter /public/portfolio/*

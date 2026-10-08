@@ -12,19 +12,14 @@ export default class MyDocument extends Document {
           {consentokId ? (
             <>
               {/*
-                cs.js 0.1.0 reads banner.notice.countries and aborts before
-                mounting the dialog when a published config has no notice
-                block. Fill that gap as the config object is assigned.
+                Consentok must run first so GCM defaults exist before gtag.
+                Served from our own domain (rewrite in next.config.js) so the
+                browser reuses the page's connection instead of opening a new
+                one to consentok.eu. Synchronous on purpose — no async/defer.
               */}
-              <script
-                dangerouslySetInnerHTML={{
-                  __html: `(function(){var key='__consentok';try{Object.defineProperty(window,key,{configurable:true,set:function(cfg){if(cfg&&cfg.banner&&!cfg.banner.notice){cfg.banner.notice={countries:[]}}Object.defineProperty(window,key,{configurable:true,writable:true,value:cfg})}})}catch(e){}})();`,
-                }}
-              />
-              {/* Consentok must run first so GCM defaults exist before gtag. */}
               {/* eslint-disable-next-line @next/next/no-sync-scripts */}
               <script
-                src={`https://consentok.eu/cs.js?id=${encodeURIComponent(consentokId)}`}
+                src={`/consentok/cs.js?id=${encodeURIComponent(consentokId)}`}
                 data-cfasync="false"
               />
             </>
