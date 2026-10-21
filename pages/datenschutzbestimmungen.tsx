@@ -4,6 +4,13 @@ import { useRouter } from 'next/router'
 import { RechtListe, RechtSeite } from '../components/c2/RechtSeite'
 import { normalizeLocale, tr } from '../lib/i18n'
 
+declare global {
+  interface Window {
+    /** Von consentok.eu/cd.js bereitgestellt; zeichnet die Cookie-Erklärung in #ConsentokDeclaration. */
+    consentokDeclaration?: { render(ziel?: Element): boolean }
+  }
+}
+
 /** Texte unverändert aus der bisherigen Seite; Darstellung: components/c2/RechtSeite.tsx (Board „C2plus-ecommlab-Datenschutz“). */
 export default function Datenschutzbestimmungen() {
   const router = useRouter()
@@ -38,13 +45,25 @@ export default function Datenschutzbestimmungen() {
               <>
                 <p className="text-pretty">{tr(locale, 'Hier finden Sie die Cookie-Erklärung mit Details zu eingesetzten Cookies und deren Kategorien.', 'Here you can find the cookie declaration with details about used cookies and their categories.')}</p>
                 {consentokId ? (
-                  <div>
+                  <>
+                    {/*
+                      Der Platzhalter bestimmt die Stelle. next/script hängt sein
+                      Tag nach der Hydration ans Ende von <body> — ohne Platzhalter
+                      landete die Erklärung unter dem Footer und blieb bei
+                      Client-Navigation auf jeder Seite stehen. onReady feuert auch
+                      beim erneuten Mounten: Das Skript läuft dann nicht noch
+                      einmal, der frische Platzhalter wäre sonst leer.
+                    */}
+                    <div id="ConsentokDeclaration" />
                     <Script
-                      id="ConsentokDeclaration"
+                      id="consentok-cd"
                       src={`https://consentok.eu/cd.js?id=${encodeURIComponent(consentokId)}`}
                       strategy="afterInteractive"
+                      onReady={() => {
+                        window.consentokDeclaration?.render()
+                      }}
                     />
-                  </div>
+                  </>
                 ) : (
                   <p className="text-pretty">{tr(locale, 'Consentok ist noch nicht konfiguriert (NEXT_PUBLIC_CONSENTOK_ID fehlt).', 'Consentok is not configured yet (NEXT_PUBLIC_CONSENTOK_ID missing).')}</p>
                 )}
