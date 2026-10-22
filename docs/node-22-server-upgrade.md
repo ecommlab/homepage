@@ -42,9 +42,24 @@ pm2 kill
 pm2 resurrect
 pm2 ls             # alle Apps wieder online?
 
-# 5. Healthcheck Homepage
+# 5. ACHTUNG: resurrect stellt Apps mit dem ALTEN Interpreter-Pfad aus dem
+#    Dump wieder her (geprüft beim Upgrade am 22.10.2026: Daemon lief neu,
+#    die App weiter unter der alten Node-Version). Die App daher frisch aus
+#    der Ecosystem-Config starten — wie deploy.sh es tut:
+cd /home/ecomde/htdocs/ecommlab.de/current
+pm2 delete ecommlab-prod
+pm2 start deploy/ecosystem.config.cjs --only ecommlab-prod --update-env
+pm2 save
+# Verifizieren, dass der Prozess die neue Node nutzt:
+readlink /proc/$(pm2 pid ecommlab-prod)/exe   # erwartet: .../v22.23.4/bin/node
+
+# 6. Healthcheck Homepage
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/   # erwartet: 200
 ```
+
+**Durchgeführt am 22.10.2026**: Server lief vorher auf 22.23.2 (nicht 20),
+jetzt 22.23.4; Daemon + App verifiziert unter v22.23.4, Healthcheck lokal
+und von außen (ecommlab.de, ecommlab.io) HTTP 200.
 
 ## Danach
 
