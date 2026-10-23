@@ -55,7 +55,7 @@ export function SeitenRahmen({
   /** Innenabstände des Hero-Inhalts (mobil und lg:) */
   heroKlasse: string
   /** Hero-Inhalt; bekommt das Feld als Zeigerbereich (für SchaerfeTitel) */
-  hero: (feldRef: RefObject<HTMLDivElement>) => ReactNode
+  hero: (feldRef: RefObject<HTMLDivElement | null>) => ReactNode
   /**
    * Element, das auf Desktop IM Hero-Feld liegt (Spalten 7–12, 152 px unter der Feldkante, 72 px Abstand unten),
    * mobil aber UNTER dem Feld steht – z. B. das Formular der Kontaktseite. Es wird nur einmal gerendert (ein gemeinsames Raster),

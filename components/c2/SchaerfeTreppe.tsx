@@ -15,7 +15,7 @@ import type { RefObject } from 'react'
  */
 const WORDS = ['Create.', 'Inspire.', 'Perform.'] as const
 
-export function SchaerfeTreppe({ areaRef, id = 'c2-hero-title' }: { areaRef: RefObject<HTMLElement>; id?: string }) {
+export function SchaerfeTreppe({ areaRef, id = 'c2-hero-title' }: { areaRef: RefObject<HTMLElement | null>; id?: string }) {
   const spans = useRef<Array<HTMLSpanElement | null>>([])
   const [sh, setSh] = useState<[number, number, number]>([100, 100, 100])
   const [weich, setWeich] = useState(false)

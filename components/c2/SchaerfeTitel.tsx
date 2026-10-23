@@ -24,7 +24,7 @@ export function SchaerfeTitel({
   as: Tag = 'h1',
 }: {
   zeilen: readonly ReactNode[]
-  areaRef: RefObject<HTMLElement>
+  areaRef: RefObject<HTMLElement | null>
   id?: string
   /** Größe, Zeilenhöhe, Farbe usw. (Tailwind), getrennt für mobil und lg: */
   className?: string
