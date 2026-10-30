@@ -7,3 +7,5 @@ export default function LeistungKiAutomation() {
   return <LeistungDetailPage leistung={leistung} />
 }
 
+// Statisch mit Verfallsdatum — Begründung in lib/isr.ts
+export { isrStaticProps as getStaticProps } from '../../lib/isr'

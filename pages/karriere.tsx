@@ -27,3 +27,5 @@ export default function Karriere() {
   )
 }
 
+// Statisch mit Verfallsdatum — Begründung in lib/isr.ts
+export { isrStaticProps as getStaticProps } from '../lib/isr'

@@ -1,3 +1,4 @@
+import { ISR_SEKUNDEN } from '../../lib/isr'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { JobDetailPage } from '../../components/JobDetailPage'
@@ -37,6 +38,7 @@ export function getStaticPaths({ locales }: { locales?: readonly string[] }) {
 }
 
 export function getStaticProps({ params }: { params: { slug: string } }) {
-  return { props: { slug: params.slug } }
+  // Verfallsdatum wie alle statischen Seiten, siehe lib/isr.ts
+  return { revalidate: ISR_SEKUNDEN, props: { slug: params.slug } }
 }
 

@@ -12,13 +12,13 @@
  * ein; der Banner-Build stellt sicher, dass es keine HTML-gefährlichen
  * Folgen (</script, <!--) enthält.
  *
- * Frische: 60 s, danach Nachfrage mit ETag — im Hintergrund, nie auf dem
- * Antwortpfad. Eine veraltete Kopie wird also sofort geliefert und parallel
- * erneuert; nur ganz ohne Kopie (erster Aufruf nach dem Start) wartet der
- * Aufrufer kurz auf den Abruf. Ist consentok.eu nicht erreichbar, bleibt die
- * letzte Kopie im Einsatz.
+ * Frische: 60 s, danach Nachfrage mit ETag. Statische Seiten erhalten die
+ * Kopie über ISR (lib/isr.ts, alle fünf Minuten im Hintergrund), serverseitig
+ * gerenderte Seiten beim Rendern. Ist consentok.eu nicht erreichbar, bleibt
+ * die letzte Kopie im Einsatz.
  */
-const HOST = 'https://consentok.eu'
+// CONSENTOK_HOST nur für lokale Messungen gegen eine selbst gebaute Runtime.
+const HOST = process.env.CONSENTOK_HOST || 'https://consentok.eu'
 const FRISCH_MS = 60_000
 const ABRUF_TIMEOUT_MS = 3000
 
@@ -61,18 +61,18 @@ function erneuern(id: string): Promise<void> {
 }
 
 /**
- * Liefert die Kopie — sofort, wenn eine da ist (bei Bedarf wird im
- * Hintergrund erneuert); sonst nach dem Abruf. null nur, wenn es keine
- * Kopie gibt und der Abruf scheitert.
+ * Liefert die Kopie. Ist sie älter als FRISCH_MS, wird erst erneuert (höchstens
+ * ABRUF_TIMEOUT_MS; scheitert der Abruf, bleibt die alte Kopie). Warten statt
+ * Hintergrund-Erneuerung, weil der Aufrufer bei statischen Seiten die
+ * ISR-Neuerzeugung ist — die rendert im Hintergrund und würde mit einer
+ * sofort gelieferten alten Kopie genau das HTML erzeugen, das die nächsten
+ * fünf Minuten liegt. null nur, wenn es keine Kopie gibt und der Abruf
+ * scheitert.
  */
 export async function consentokRuntime(id: string): Promise<Kopie | null> {
   if (!istSiteKey(id)) return null
   const kopie = kopien.get(id)
-  if (kopie) {
-    if (Date.now() - kopie.zeit > FRISCH_MS) void erneuern(id)
-    return kopie
-  }
-  await erneuern(id)
+  if (!kopie || Date.now() - kopie.zeit > FRISCH_MS) await erneuern(id)
   return kopien.get(id) ?? null
 }
 
