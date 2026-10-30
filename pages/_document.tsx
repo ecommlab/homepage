@@ -1,8 +1,20 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document'
+import type { DocumentContext, DocumentInitialProps } from 'next/document'
+import { consentokRuntime, inlineSicher } from '../lib/consentokRuntime'
 
-export default class MyDocument extends Document {
+type Props = DocumentInitialProps & { consentokInline: string | null }
+
+export default class MyDocument extends Document<Props> {
+  static async getInitialProps(ctx: DocumentContext): Promise<Props> {
+    const initial = await Document.getInitialProps(ctx)
+    const id = process.env.NEXT_PUBLIC_CONSENTOK_ID
+    const kopie = id ? await consentokRuntime(id) : null
+    return { ...initial, consentokInline: kopie && inlineSicher(kopie.body) ? kopie.body : null }
+  }
+
   render() {
     const consentokId = process.env.NEXT_PUBLIC_CONSENTOK_ID
+    const consentokInline = this.props.consentokInline
     const ga4Id = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID
     const locale = this.props.__NEXT_DATA__?.locale === 'en' ? 'en' : 'de'
 
@@ -10,19 +22,18 @@ export default class MyDocument extends Document {
       <Html lang={locale}>
         <Head>
           {consentokId ? (
-            <>
-              {/*
-                Consentok must run first so GCM defaults exist before gtag.
-                Served from our own domain (rewrite in next.config.js) so the
-                browser reuses the page's connection instead of opening a new
-                one to consentok.eu. Synchronous on purpose — no async/defer.
-              */}
-              {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-              <script
-                src={`/consentok/cs.js?id=${encodeURIComponent(consentokId)}`}
-                data-cfasync="false"
-              />
-            </>
+            consentokInline ? (
+              // ConsentOK muss vor dem ersten Paint laufen (Banner, Consent-
+              // Mode-Vorgaben vor gtag). Als synchrones externes Skript war es
+              // die teuerste render-blockierende Anfrage der Seite — inline
+              // kostet es nur noch seine Bytes. Kopie und Frische: lib/consentokRuntime.ts.
+              <script data-cfasync="false" dangerouslySetInnerHTML={{ __html: consentokInline }} />
+            ) : (
+              // Rückfall ohne Kopie im Speicher: extern über die eigene Domain
+              // (rewrite in next.config.js), bewusst synchron — kein async/defer.
+              // eslint-disable-next-line @next/next/no-sync-scripts
+              <script src={`/consentok/cs.js?id=${encodeURIComponent(consentokId)}`} data-cfasync="false" />
+            )
           ) : null}
 
           <script

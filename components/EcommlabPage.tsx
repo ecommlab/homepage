@@ -246,6 +246,9 @@ export function EcommlabPage() {
                       alt={PARTNER_NAMEN[i] ?? p.name}
                       width={250}
                       height={50}
+                      // Die Logos liegen mobil im ersten Viewport; lazy hieße dort nur
+                      // „nach Layout und JS nachladen“ (Lighthouse: LCP-Element mit loading=lazy).
+                      loading="eager"
                       className={`block h-auto w-auto max-w-full object-contain dark:invert lg:max-h-none lg:w-[min(180px,12.5vw)] lg:max-w-none ${PARTNER_MOBIL_HOEHE[i]}`}
                     />
                   </li>

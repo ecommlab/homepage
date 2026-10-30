@@ -55,7 +55,11 @@ html.dark {
 }
 
 /* ---------- Keyframes (Namen wie im Canvas-Board) ---------- */
-@keyframes c2-rise   { from { opacity: 0; transform: translateX(var(--c2-rise-x, -24px)) } to { opacity: 1; transform: none } }
+/* c2-rise ohne Fade: Elemente, deren erster Paint bei opacity 0 liegt, zählt
+   Chrome nie als LCP-Kandidat — der Hero-Titel war damit für das LCP unsichtbar
+   und Lighthouse wich auf ein Partnerlogo aus. Sichtbar ab dem ersten Bild,
+   das Gleiten von links bleibt. */
+@keyframes c2-rise   { from { transform: translateX(var(--c2-rise-x, -24px)) } to { transform: none } }
 @keyframes c2-fade   { from { opacity: 0 } to { opacity: 1 } }
 @keyframes c2-stanz  { from { transform: scale(1) } to { transform: scale(0) } }
 @keyframes c2-etikett-in { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: none } }
