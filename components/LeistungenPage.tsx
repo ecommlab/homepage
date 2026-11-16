@@ -80,7 +80,7 @@ export function LeistungenPage() {
                           {pick(locale, leistungsNamen[slug])}
                         </span>
                         <span className="text-pretty text-[15px] leading-[1.45] text-[color:var(--c2-muted)] lg:col-span-3 lg:col-start-5 lg:text-[17px] lg:text-[color:var(--c2-ink)]">
-                          <Fliesstext text={pick(locale, titel(slug) ?? { de: '', en: '' })} />
+                          <Fliesstext text={pick(locale, titel(slug) ?? { de: '', en: '', bg: '' })} />
                         </span>
                       </span>
                       <span className="flex lg:col-start-8 lg:justify-self-end">

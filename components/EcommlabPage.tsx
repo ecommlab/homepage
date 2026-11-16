@@ -11,11 +11,12 @@ import { MobilMenue } from './c2/MobilMenue'
 import { ReiterNav } from './c2/ReiterNav'
 import { RisoFilterDefs, RisoKachel, RisoUmschalter } from './c2/RisoKachel'
 import { SchaerfeTreppe } from './c2/SchaerfeTreppe'
+import { Sprachwahl } from './c2/Sprachwahl'
 import { StartFuss } from './c2/StartFuss'
 import { useThema } from './c2/useThema'
 import { Zaehlwerk } from './c2/Zaehlwerk'
 import { geologica } from '../lib/fonts'
-import { normalizeLocale } from '../lib/i18n'
+import { normalizeLocale, tr } from '../lib/i18n'
 import { servicePartners } from '../lib/servicePartners'
 import { startseiteInhalt } from '../lib/startseiteInhalt'
 
@@ -33,12 +34,12 @@ import { startseiteInhalt } from '../lib/startseiteInhalt'
  */
 
 const PROJEKTE = [
-  { slug: 'pfundskerl-xxl-de', name: 'Pfundskerl', src: '/portfolio/pfundskerl.jpeg', crop: true, pos: '50% 50%', altDe: 'Pfundskerl – Model in olivgrüner Winterjacke vor Nebellandschaft', altEn: 'Pfundskerl – model in an olive winter jacket against a misty landscape' },
-  { slug: 'riess-ambiente', name: 'Riess-Ambiente', src: '/portfolio/riess-ambiente.png', crop: false, pos: '50% 50%', altDe: 'Riess-Ambiente – dunkles Ledersofa im Wohnraum', altEn: 'Riess-Ambiente – dark leather sofa in a living room' },
-  { slug: 'liquid-life', name: 'Liquid Life', src: '/portfolio/liquid-life.png', crop: false, pos: '50% 15%', altDe: 'Liquid Life – Mountainbiker im Sprung auf einem Waldtrail', altEn: 'Liquid Life – mountain biker jumping on a forest trail' },
-  { slug: 'baer-schuhe', name: 'Bär Schuhe', src: '/portfolio/baer-schuhe.png', crop: false, pos: '50% 35%', altDe: 'Bär Schuhe – Frau mit Lederschuhen in beiden Händen', altEn: 'Bär Schuhe – woman holding leather shoes in both hands' },
-  { slug: 'kaipara', name: 'Kaipara', src: '/portfolio/kaipara.jpg', crop: false, pos: '50% 40%', altDe: 'Kaipara – Mann im dunkelgrünen Longsleeve vor Bergkulisse', altEn: 'Kaipara – man in a dark green long-sleeve shirt against mountains' },
-  { slug: 'newone', name: 'Newone', src: '/portfolio/newone.png', crop: false, pos: '50% 50%', altDe: 'Newone – Armbänder am Handgelenk im warmen Licht', altEn: 'Newone – bracelets on a wrist in warm light' },
+  { slug: 'pfundskerl-xxl-de', name: 'Pfundskerl', src: '/portfolio/pfundskerl.jpeg', crop: true, pos: '50% 50%', altDe: 'Pfundskerl – Model in olivgrüner Winterjacke vor Nebellandschaft', altEn: 'Pfundskerl – model in an olive winter jacket against a misty landscape', altBg: 'Pfundskerl – модел в маслиненозелено зимно яке на фона на мъглив пейзаж' },
+  { slug: 'riess-ambiente', name: 'Riess-Ambiente', src: '/portfolio/riess-ambiente.png', crop: false, pos: '50% 50%', altDe: 'Riess-Ambiente – dunkles Ledersofa im Wohnraum', altEn: 'Riess-Ambiente – dark leather sofa in a living room', altBg: 'Riess-Ambiente – тъмен кожен диван в дневна' },
+  { slug: 'liquid-life', name: 'Liquid Life', src: '/portfolio/liquid-life.png', crop: false, pos: '50% 15%', altDe: 'Liquid Life – Mountainbiker im Sprung auf einem Waldtrail', altEn: 'Liquid Life – mountain biker jumping on a forest trail', altBg: 'Liquid Life – планински колоездач в скок по горска пътека' },
+  { slug: 'baer-schuhe', name: 'Bär Schuhe', src: '/portfolio/baer-schuhe.png', crop: false, pos: '50% 35%', altDe: 'Bär Schuhe – Frau mit Lederschuhen in beiden Händen', altEn: 'Bär Schuhe – woman holding leather shoes in both hands', altBg: 'Bär Schuhe – жена с кожени обувки в двете ръце' },
+  { slug: 'kaipara', name: 'Kaipara', src: '/portfolio/kaipara.jpg', crop: false, pos: '50% 40%', altDe: 'Kaipara – Mann im dunkelgrünen Longsleeve vor Bergkulisse', altEn: 'Kaipara – man in a dark green long-sleeve shirt against mountains', altBg: 'Kaipara – мъж с тъмнозелена блуза с дълъг ръкав на фона на планини' },
+  { slug: 'newone', name: 'Newone', src: '/portfolio/newone.png', crop: false, pos: '50% 50%', altDe: 'Newone – Armbänder am Handgelenk im warmen Licht', altEn: 'Newone – bracelets on a wrist in warm light', altBg: 'Newone – гривни на китка в топла светлина' },
 ] as const
 
 /** Partner-Logos: ORIGINAL-Dateien aus public/partners (unverändert), Reihenfolge wie im Board. */
@@ -123,7 +124,6 @@ export function EcommlabPage() {
   const router = useRouter()
   const locale = normalizeLocale(router.locale)
   const t = startseiteInhalt(locale)
-  const en = locale === 'en'
 
   const heroRef = useRef<HTMLDivElement>(null)
   const [lasche, setLasche] = useState(false)
@@ -176,27 +176,11 @@ export function EcommlabPage() {
                 <div className="absolute right-[64px] top-[26px] z-[3] hidden items-center gap-[28px] lg:flex">
                   <ReiterNav items={hauptnav} ariaLabel={t.kopf.hauptnavigation} />
                   <nav aria-label={t.kopf.sprache} className="flex items-center gap-[2px] text-[15px] leading-none" style={{ color: 'var(--c2-field-text)' }}>
-                    {en ? (
-                      <Link href={router.asPath} locale="de" lang="de" hrefLang="de" aria-label="Deutsch" className="inline-flex min-h-[44px] items-center px-[4px] font-medium no-underline hover:underline">
-                        DE
-                      </Link>
-                    ) : (
-                      <span lang="de" aria-current="true" className="inline-flex min-h-[44px] items-center px-[4px] font-semibold">
-                        DE
-                      </span>
-                    )}
-                    <span aria-hidden className="font-medium">
-                      ·
-                    </span>
-                    {en ? (
-                      <span lang="en" aria-current="true" className="inline-flex min-h-[44px] items-center px-[4px] font-semibold">
-                        EN
-                      </span>
-                    ) : (
-                      <Link href={router.asPath} locale="en" lang="en" hrefLang="en" aria-label="English" className="inline-flex min-h-[44px] items-center px-[4px] font-medium no-underline hover:underline">
-                        EN
-                      </Link>
-                    )}
+                    <Sprachwahl
+                      linkKlasse="inline-flex min-h-[44px] items-center px-[4px] font-medium no-underline hover:underline"
+                      aktivKlasse="inline-flex min-h-[44px] items-center px-[4px] font-semibold"
+                      trennerKlasse="font-medium"
+                    />
                   </nav>
                   <Link href={kontaktLink.href} className="c2-pill-feld inline-flex h-[44px] items-center justify-center whitespace-nowrap rounded-full px-[20px] text-[15px] font-semibold leading-none no-underline">
                     {kontaktLink.label}
@@ -327,7 +311,7 @@ export function EcommlabPage() {
                   key={p.slug}
                   href={`/referenzen/${p.slug}`}
                   src={p.src}
-                  alt={en ? p.altEn : p.altDe}
+                  alt={tr(locale, p.altDe, p.altEn, p.altBg)}
                   name={p.name}
                   crop={p.crop}
                   objectPosition={p.pos}

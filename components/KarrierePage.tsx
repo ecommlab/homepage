@@ -5,8 +5,9 @@ import { SchaerfeTitel, heroFadeDelay } from './c2/SchaerfeTitel'
 import { SeitenRahmen } from './c2/SeitenRahmen'
 import { Fliesstext, satz } from '../lib/c2Text'
 import { normalizeLocale } from '../lib/i18n'
+import type { AppLocale } from '../lib/i18n'
 import { jobs } from '../lib/jobs'
-import { karriere as t, pick } from '../lib/unterseitenInhalt'
+import { karriere as t, pick, pickZ } from '../lib/unterseitenInhalt'
 
 /**
  * /karriere – Board „C2plus-ecommlab-Karriere“ / „C2m-ecommlab-Karriere“. Farbe Pflaume = Karriere („du“).
@@ -14,7 +15,7 @@ import { karriere as t, pick } from '../lib/unterseitenInhalt'
  * Arbeitsweise (zwei Absätze, Desktop mit Schnellkontakt-Karte rechts) · Offene Positionen (Register aus lib/jobs.ts) ·
  * mobil: Schnellkontakt-Karte unter den Positionen.
  */
-function Schnellkontakt({ locale, className }: { locale: 'de' | 'en'; className: string }) {
+function Schnellkontakt({ locale, className }: { locale: AppLocale; className: string }) {
   return (
     <div className={`flex flex-col items-start rounded-[24px] border-[1.5px] ${className}`} style={{ borderColor: 'var(--c2-line)' }}>
       <p className="m-0 text-[14px] font-semibold leading-[1.3] text-[color:var(--c2-muted)] lg:inline-flex lg:h-[34px] lg:items-center lg:rounded-full lg:bg-[color:var(--c2-ink)] lg:px-[14px] lg:leading-none lg:text-[color:var(--c2-surface)]">
@@ -36,7 +37,7 @@ function Schnellkontakt({ locale, className }: { locale: 'de' | 'en'; className:
 export function KarrierePage() {
   const router = useRouter()
   const locale = normalizeLocale(router.locale)
-  const woerter = locale === 'en' ? t.titelWoerter.en : t.titelWoerter.de
+  const woerter = pickZ(locale, t.titelWoerter)
 
   return (
     <SeitenRahmen

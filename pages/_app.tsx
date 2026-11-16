@@ -5,26 +5,20 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useRef } from 'react'
 import { BackToTopButton } from '../components/BackToTopButton'
+import { appLocales, lokalPfad, normalizeLocale } from '../lib/i18n'
+import type { AppLocale } from '../lib/i18n'
 
 function stripQueryAndHash(url: string) {
   return url.split('#')[0]?.split('?')[0] || '/'
 }
 
+/** Pfad ohne Sprachpräfix: Deutsch ist Standard (kein Präfix), /en und /bg tragen eines. */
 function stripLocalePrefix(path: string) {
-  // defaultLocale is "de" (no prefix), "en" is prefixed as /en/...
-  if (path === '/en') return '/'
-  if (path.startsWith('/en/')) return path.slice(3) || '/'
-  if (path === '/de') return '/'
-  if (path.startsWith('/de/')) return path.slice(3) || '/'
+  for (const l of appLocales) {
+    if (path === `/${l}`) return '/'
+    if (path.startsWith(`/${l}/`)) return path.slice(l.length + 1) || '/'
+  }
   return path || '/'
-}
-
-function enFromDePath(dePath: string) {
-  return dePath === '/' ? '/en' : `/en${dePath}`
-}
-
-function deFromEnPath(enPathWithoutLocale: string) {
-  return enPathWithoutLocale
 }
 
 function scrollToTopSmooth() {
@@ -95,21 +89,19 @@ export default function App({ Component, pageProps }: AppProps) {
     (process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || '').replace(/\/$/, '') ||
     '' /* falls leer, nutzen wir relative URLs */
 
-  const currentPath = stripLocalePrefix(stripQueryAndHash(router.asPath || '/'))
-  const dePath = router.locale === 'en' ? deFromEnPath(currentPath) : currentPath
-  const enPath = enFromDePath(dePath)
-
-  const deHref = `${baseUrl}${dePath}`
-  const enHref = `${baseUrl}${enPath}`
-  const canonical = router.locale === 'en' ? enHref : deHref
+  // Dieselbe Seite in jeder Sprache: Der Pfad ist in allen Sprachen gleich, nur das Präfix wechselt.
+  const pfad = stripLocalePrefix(stripQueryAndHash(router.asPath || '/'))
+  const href = (l: AppLocale) => `${baseUrl}${lokalPfad(l, pfad)}`
+  const locale = normalizeLocale(router.locale)
 
   return (
     <>
       <Head>
-        <link rel="canonical" href={canonical} />
-        <link rel="alternate" hrefLang="de" href={deHref} />
-        <link rel="alternate" hrefLang="en" href={enHref} />
-        <link rel="alternate" hrefLang="x-default" href={deHref} />
+        <link rel="canonical" href={href(locale)} />
+        {appLocales.map((l) => (
+          <link key={l} rel="alternate" hrefLang={l} href={href(l)} />
+        ))}
+        <link rel="alternate" hrefLang="x-default" href={href('de')} />
       </Head>
       <div id="page-top" />
       <Component {...pageProps} />

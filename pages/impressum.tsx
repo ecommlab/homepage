@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { RechtLink, RechtSeite } from '../components/c2/RechtSeite'
 import { normalizeLocale, tr } from '../lib/i18n'
 
-/** Texte unverändert aus der bisherigen Seite; Darstellung: components/c2/RechtSeite.tsx (Board „C2plus-ecommlab-Impressum“). */
+/** Angaben unverändert aus der bisherigen Seite, Beschriftungen je Sprache (Registerangaben und Paragrafen bleiben im Original); Darstellung: components/c2/RechtSeite.tsx (Board „C2plus-ecommlab-Impressum“). */
 export default function Impressum() {
   const router = useRouter()
   const locale = normalizeLocale(router.locale)
@@ -11,8 +11,8 @@ export default function Impressum() {
   return (
     <>
       <Head>
-        <title>{`${tr(locale, 'Impressum', 'Legal notice')} – Ecommlab`}</title>
-        <meta name="description" content={tr(locale, 'Impressum der Ecommlab GmbH.', 'Legal notice of Ecommlab GmbH.')} />
+        <title>{`${tr(locale, 'Impressum', 'Legal notice', 'Импресум')} – Ecommlab`}</title>
+        <meta name="description" content={tr(locale, 'Impressum der Ecommlab GmbH.', 'Legal notice of Ecommlab GmbH.', 'Импресум на Ecommlab GmbH.')} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -25,18 +25,18 @@ export default function Impressum() {
               <p>
                 Turnerstraße 15
                 <br />
-                81827 München, Deutschland
+                81827 München, {tr(locale, 'Deutschland', 'Germany', 'Германия')}
               </p>
             ),
           },
-          { titel: 'Vertreten durch', inhalt: <p>Andrey Cekovski, Pavel Mihaylov</p> },
+          { titel: tr(locale, 'Vertreten durch', 'Represented by', 'Представлявано от'), inhalt: <p>Andrey Cekovski, Pavel Mihaylov</p> },
           {
-            titel: tr(locale, 'Kontakt', 'Contact'),
+            titel: tr(locale, 'Kontakt', 'Contact', 'Контакт'),
             inhalt: (
               <p>
-                Telefon: <RechtLink href="tel:+498941616248">+49 89 41 61 62 48</RechtLink>
+                {tr(locale, 'Telefon', 'Phone', 'Телефон')}: <RechtLink href="tel:+498941616248">+49 89 41 61 62 48</RechtLink>
                 <br />
-                E-Mail: <RechtLink href="mailto:hello@ecommlab.io">hello@ecommlab.io</RechtLink>
+                {tr(locale, 'E-Mail', 'Email', 'Имейл')}: <RechtLink href="mailto:hello@ecommlab.io">hello@ecommlab.io</RechtLink>
                 <br />
                 Web:{' '}
                 <RechtLink href="https://ecommlab.io" extern>
@@ -46,17 +46,17 @@ export default function Impressum() {
             ),
           },
           {
-            titel: 'Registereintrag',
+            titel: tr(locale, 'Registereintrag', 'Commercial register', 'Търговски регистър'),
             inhalt: (
               <p>
-                Registergericht: Amtsgericht München
+                {tr(locale, 'Registergericht', 'Register court', 'Регистърен съд')}: Amtsgericht München
                 <br />
-                Registernummer: HRB 290394
+                {tr(locale, 'Registernummer', 'Registration number', 'Регистрационен номер')}: HRB 290394
               </p>
             ),
           },
-          { titel: 'Umsatzsteuer-ID (§27a UStG)', inhalt: <p>DE366772858</p> },
-          { titel: 'Verantwortlicher gem. RStV', inhalt: <p>Andrey Cekovski</p> },
+          { titel: tr(locale, 'Umsatzsteuer-ID (§27a UStG)', 'VAT ID (§27a UStG)', 'ДДС номер (§27a UStG)'), inhalt: <p>DE366772858</p> },
+          { titel: tr(locale, 'Verantwortlicher gem. RStV', 'Responsible for content (RStV)', 'Отговорен за съдържанието (RStV)'), inhalt: <p>Andrey Cekovski</p> },
         ]}
       />
     </>

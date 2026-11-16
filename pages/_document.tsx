@@ -1,26 +1,30 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document'
 import type { DocumentContext, DocumentInitialProps } from 'next/document'
 import { consentokRuntime, inlineSicher } from '../lib/consentokRuntime'
+import { normalizeLocale } from '../lib/i18n'
+import { kyrillischeSchriftdatei } from '../lib/kyrillischeSchrift'
 
-type Props = DocumentInitialProps & { consentokInline: string | null }
+type Props = DocumentInitialProps & { consentokInline: string | null; kyrillisch: string | null }
 
 export default class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext): Promise<Props> {
     const initial = await Document.getInitialProps(ctx)
     const id = process.env.NEXT_PUBLIC_CONSENTOK_ID
     const kopie = id ? await consentokRuntime(id) : null
-    return { ...initial, consentokInline: kopie && inlineSicher(kopie.body) ? kopie.body : null }
+    return { ...initial, consentokInline: kopie && inlineSicher(kopie.body) ? kopie.body : null, kyrillisch: ctx.locale === 'bg' ? kyrillischeSchriftdatei() : null }
   }
 
   render() {
     const consentokId = process.env.NEXT_PUBLIC_CONSENTOK_ID
     const consentokInline = this.props.consentokInline
     const ga4Id = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID
-    const locale = this.props.__NEXT_DATA__?.locale === 'en' ? 'en' : 'de'
+    const locale = normalizeLocale(this.props.__NEXT_DATA__?.locale)
 
     return (
       <Html lang={locale}>
         <Head>
+          {/* Kyrillische Schrift nur auf /bg vorladen – Begründung in lib/kyrillischeSchrift.ts */}
+          {this.props.kyrillisch ? <link rel="preload" as="font" type="font/woff2" crossOrigin="anonymous" href={this.props.kyrillisch} /> : null}
 
           <script
             type="text/plain"

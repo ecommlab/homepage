@@ -10,13 +10,14 @@ export default function Team() {
   return (
     <>
       <Head>
-        <title>{tr(locale, 'Team – Ecommlab', 'Team – Ecommlab')}</title>
+        <title>{tr(locale, 'Team – Ecommlab', 'Team – Ecommlab', 'Екип – Ecommlab')}</title>
         <meta
           name="description"
           content={tr(
             locale,
             'Lerne das Team hinter Ecommlab kennen: E-Commerce-Spezialist:innen, Entwickler:innen, Designer:innen und Marketing-Profis.',
             'Meet the people behind Ecommlab: e-commerce specialists, developers, designers and marketing pros.',
+            'Запознайте се с екипа зад Ecommlab: специалисти по електронна търговия, разработчици, дизайнери и маркетинг професионалисти.',
           )}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

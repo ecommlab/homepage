@@ -10,13 +10,14 @@ export default function Leistungen() {
   return (
     <>
       <Head>
-        <title>{tr(locale, 'Leistungen – Ecommlab', 'Services – Ecommlab')}</title>
+        <title>{tr(locale, 'Leistungen – Ecommlab', 'Services – Ecommlab', 'Услуги – Ecommlab')}</title>
         <meta
           name="description"
           content={tr(
             locale,
             'Individuell angepasste Lösungen für E-Commerce, Web Development, Online Marketing, SEO und mehr.',
             'Tailored solutions for e-commerce, web development, online marketing, SEO, and more.',
+            'Индивидуални решения за електронна търговия, уеб разработка, онлайн маркетинг, SEO и още.',
           )}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

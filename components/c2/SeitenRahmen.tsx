@@ -10,6 +10,7 @@ import { Menue } from './Icons'
 import { EcommlabLogo } from './Marken'
 import { MobilMenue } from './MobilMenue'
 import { ReiterNav } from './ReiterNav'
+import { Sprachwahl } from './Sprachwahl'
 import { StartFuss } from './StartFuss'
 import { useThema } from './useThema'
 
@@ -67,7 +68,6 @@ export function SeitenRahmen({
   const router = useRouter()
   const locale = normalizeLocale(router.locale)
   const t = startseiteInhalt(locale)
-  const en = locale === 'en'
   const f = FELD[feld]
   const hell = feld !== 'orchidee'
 
@@ -124,27 +124,7 @@ export function SeitenRahmen({
                 <div className="absolute right-[64px] top-[26px] z-[3] hidden items-center gap-[28px] lg:flex">
                   <ReiterNav items={hauptnav} active={bereich === '/kontakt' ? undefined : bereich} aktivTyp={aktivTyp} ariaLabel={t.kopf.hauptnavigation} textFarbe={f.text} />
                   <nav aria-label={t.kopf.sprache} className="flex items-center gap-[2px] text-[15px] leading-none" style={{ color: f.text }}>
-                    {en ? (
-                      <Link href={router.asPath} locale="de" lang="de" hrefLang="de" aria-label="Deutsch" className={sprachLink}>
-                        DE
-                      </Link>
-                    ) : (
-                      <span lang="de" aria-current="true" className="inline-flex min-h-[44px] items-center px-[4px] font-semibold">
-                        DE
-                      </span>
-                    )}
-                    <span aria-hidden className="font-medium">
-                      ·
-                    </span>
-                    {en ? (
-                      <span lang="en" aria-current="true" className="inline-flex min-h-[44px] items-center px-[4px] font-semibold">
-                        EN
-                      </span>
-                    ) : (
-                      <Link href={router.asPath} locale="en" lang="en" hrefLang="en" aria-label="English" className={sprachLink}>
-                        EN
-                      </Link>
-                    )}
+                    <Sprachwahl linkKlasse={sprachLink} aktivKlasse="inline-flex min-h-[44px] items-center px-[4px] font-semibold" trennerKlasse="font-medium" />
                   </nav>
                   <Link
                     href={kontaktLink.href}

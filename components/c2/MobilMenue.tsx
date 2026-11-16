@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef } from 'react'
 import type { StartseiteInhalt } from '../../lib/startseiteInhalt'
 import { Pfeil, Schliessen } from './Icons'
+import { Sprachwahl } from './Sprachwahl'
 
 /**
  * Mobiles Vollbild-Menü (< 1024 px), Board C2m „m-menu“.
@@ -75,7 +76,6 @@ export function MobilMenue({
   }, [router.events, onSchliessen])
 
   if (!offen) return null
-  const en = router.locale === 'en'
 
   return (
     <div
@@ -121,25 +121,7 @@ export function MobilMenue({
       </div>
       <div className="mt-auto flex items-center justify-between pt-[28px] text-[15px] font-semibold leading-none">
         <nav aria-label={t.kopf.sprache} className="flex items-center gap-[12px]">
-          {en ? (
-            <Link href={router.asPath} locale="de" lang="de" hrefLang="de" className="flex min-h-[44px] items-center font-medium no-underline">
-              DE
-            </Link>
-          ) : (
-            <span aria-current="true" className="flex min-h-[44px] items-center">
-              DE
-            </span>
-          )}
-          <span aria-hidden>·</span>
-          {en ? (
-            <span aria-current="true" className="flex min-h-[44px] items-center">
-              EN
-            </span>
-          ) : (
-            <Link href={router.asPath} locale="en" lang="en" hrefLang="en" className="flex min-h-[44px] items-center font-medium no-underline">
-              EN
-            </Link>
-          )}
+          <Sprachwahl linkKlasse="flex min-h-[44px] items-center font-medium no-underline" aktivKlasse="flex min-h-[44px] items-center" />
         </nav>
         <button type="button" onClick={onThema} className="flex min-h-[44px] items-center border-0 bg-transparent p-0 font-medium" style={{ color: 'inherit', fontFamily: 'inherit' }}>
           {thema === 'dark' ? t.fuss.hell : t.fuss.dunkel}

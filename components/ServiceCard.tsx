@@ -25,7 +25,7 @@ export function ServiceCard({ title, description, href }: Props) {
       </div>
       <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{description}</p>
       <div className="mt-4 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-        {tr(locale, 'weiterlesen', 'read more')}{' '}
+        {tr(locale, 'weiterlesen', 'read more', 'прочетете още')}{' '}
         <span className="inline-block transition group-hover:translate-x-0.5">→</span>
       </div>
     </>

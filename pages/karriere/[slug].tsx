@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { JobDetailPage } from '../../components/JobDetailPage'
 import { getJobBySlug, jobs } from '../../lib/jobs'
-import { normalizeLocale, tr } from '../../lib/i18n'
+import { appLocales, normalizeLocale, tr } from '../../lib/i18n'
 
 export default function JobDetail({ slug }: { slug: string }) {
   const router = useRouter()
@@ -19,7 +19,7 @@ export default function JobDetail({ slug }: { slug: string }) {
         <title>{`${job.title[locale]} – Ecommlab`}</title>
         <meta
           name="description"
-          content={tr(locale, `${job.title.de} – Komm in unser Team.`, `${job.title.en} – Join our team.`)}
+          content={tr(locale, `${job.title.de} – Komm in unser Team.`, `${job.title.en} – Join our team.`, `${job.title.bg} – Ела в нашия екип.`)}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -30,7 +30,7 @@ export default function JobDetail({ slug }: { slug: string }) {
 }
 
 export function getStaticPaths({ locales }: { locales?: readonly string[] }) {
-  const locs = locales ?? ['de', 'en']
+  const locs = locales ?? appLocales
   return {
     paths: locs.flatMap((locale) => jobs.map((j) => ({ params: { slug: j.slug }, locale }))),
     fallback: false,

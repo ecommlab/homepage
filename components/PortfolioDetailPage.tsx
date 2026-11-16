@@ -8,14 +8,15 @@ import { SchaerfeTitel, heroFadeDelay } from './c2/SchaerfeTitel'
 import { SeitenRahmen } from './c2/SeitenRahmen'
 import { Fliesstext, satz } from '../lib/c2Text'
 import { c2BildAlt, c2Kachel } from '../lib/c2Projekte'
-import { normalizeLocale } from '../lib/i18n'
+import { normalizeLocale, tr } from '../lib/i18n'
+import type { AppLocale } from '../lib/i18n'
 import { getCaseBySlug, portfolioCases } from '../lib/portfolioCases'
 import type { KeyFactRow } from '../lib/portfolioCases'
 import { startseiteInhalt } from '../lib/startseiteInhalt'
 import { pick, referenzen as t } from '../lib/unterseitenInhalt'
 
 /**
- * /referenzen/<slug> (DE) und /en/projects/<slug> (EN) – Board „C2plus-ecommlab-Referenz-*“ / „C2m-ecommlab-Referenz-*“.
+ * /referenzen/<slug> (DE, BG unter /bg) und /en/projects/<slug> (EN) – Board „C2plus-ecommlab-Referenz-*“ / „C2m-ecommlab-Referenz-*“.
  * Hero Tinte: Zurück-Link, Projektname (Plakat 112 px), Zusammenfassung, Eckdaten (Service · Technologie · Datum · Ort) ·
  * Keyfacts mit Riso-Bild (Systemnamen fett) · optionale Zusatzbilder (Bär Schuhe) · Nachbarn (im Kreis) · Fuß.
  * Inhalte aus lib/portfolioCases.ts. Die frühere Teilen-Leiste entfällt.
@@ -49,7 +50,7 @@ export function PortfolioDetailPage({ slug }: { slug: string }) {
         <title>{`${item.title} – Ecommlab`}</title>
         <meta
           name="description"
-          content={item.summary?.[locale] ?? (locale === 'en' ? `${item.title} — a selected Ecommlab project.` : `${item.title} – Referenzprojekt von Ecommlab.`)}
+          content={item.summary?.[locale] ?? tr(locale, `${item.title} – Referenzprojekt von Ecommlab.`, `${item.title} — a selected Ecommlab project.`, `${item.title} – референтен проект на Ecommlab.`)}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -70,7 +71,13 @@ export function PortfolioDetailPage({ slug }: { slug: string }) {
               areaRef={feldRef}
               woerter
               mobilGestapelt
-              zeilen={item.title.split(' ')}
+              // Projektnamen sind deutsche Marken: als Deutsch ausgezeichnet, damit die Silbentrennung (hyphens-auto)
+              // in jeder Sprache greift – „Pfundskerl“ passt auf 360 px sonst nicht in die Zeile.
+              zeilen={item.title.split(' ').map((wort) => (
+                <span key={wort} lang="de">
+                  {wort}
+                </span>
+              ))}
               className="mt-[16px] text-[60px] leading-[0.96] tracking-[-0.03em] lg:mt-[23px] lg:text-[length:min(112px,7.778vw)]"
             />
             <div style={{ animation: `c2-fade 300ms ease-out ${heroFadeDelay(1)}ms both` }}>
@@ -154,7 +161,7 @@ export function PortfolioDetailPage({ slug }: { slug: string }) {
           <ZurueckLink href={basis}>{pick(locale, t.zurueck)}</ZurueckLink>
           <div className="mt-[16px] grid w-full grid-cols-2 gap-[12px] lg:mt-[24px] lg:grid-cols-3 lg:gap-[24px]">
             {nachbarn.map((c) => {
-              const b = c2Kachel[c.slug] ?? { src: c.imageSrc, alt: { de: c.title, en: c.title } }
+              const b = c2Kachel[c.slug] ?? { src: c.imageSrc, alt: { de: c.title, en: c.title, bg: c.title } }
               return (
                 <RisoKachel
                   key={c.slug}
@@ -177,7 +184,7 @@ export function PortfolioDetailPage({ slug }: { slug: string }) {
 }
 
 /** Eine Keyfact-Zeile: Text (erste Zeile halbfett) oder Gruppe mit Unterpunkten (Desktop zweispaltig mit Punkt, mobil „–“). */
-function Keyfact({ fakt, erst, locale }: { fakt: KeyFactRow; erst: boolean; locale: 'de' | 'en' }) {
+function Keyfact({ fakt, erst, locale }: { fakt: KeyFactRow; erst: boolean; locale: AppLocale }) {
   const text = <Fliesstext text={fakt.text[locale]} fett />
   return (
     <li

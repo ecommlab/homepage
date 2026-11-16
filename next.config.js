@@ -4,7 +4,7 @@ const nextConfig = {
   // Slimmer Cloud Run image (see Dockerfile)
   output: 'standalone',
   i18n: {
-    locales: ['de', 'en'],
+    locales: ['de', 'en', 'bg'],
     defaultLocale: 'de',
   },
   // ConsentOK über die eigene Domain (pages/api/consentok-cs.ts): spart dem

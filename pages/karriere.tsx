@@ -10,13 +10,14 @@ export default function Karriere() {
   return (
     <>
       <Head>
-        <title>{tr(locale, 'Karriere – Ecommlab', 'Careers – Ecommlab')}</title>
+        <title>{tr(locale, 'Karriere – Ecommlab', 'Careers – Ecommlab', 'Кариери – Ecommlab')}</title>
         <meta
           name="description"
           content={tr(
             locale,
             'Komm in unser Team: Offene Positionen und Einblicke in unsere Arbeitsweise.',
             'Join our team: Open roles and insights into how we work.',
+            'Ела в нашия екип: отворени позиции и поглед към начина ни на работа.',
           )}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

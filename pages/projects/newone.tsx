@@ -1,4 +1,5 @@
 import { PortfolioDetailPage } from '../../components/PortfolioDetailPage'
+import { lokalPfad, normalizeLocale } from '../../lib/i18n'
 
 export default function ProjectNewone() {
   return <PortfolioDetailPage slug="newone" />
@@ -9,8 +10,9 @@ export function getServerSideProps({
 }: {
   locale?: string
 }): { props: Record<string, never> } | { redirect: { destination: string; permanent: boolean } } {
-  if (locale === 'de') {
-    return { redirect: { destination: '/referenzen/newone', permanent: true } }
+  // /projects ist die englische Adresse; Deutsch und Bulgarisch liegen unter /referenzen (mit Sprachpräfix).
+  if (locale !== 'en') {
+    return { redirect: { destination: lokalPfad(normalizeLocale(locale), '/referenzen/newone'), permanent: true } }
   }
   return { props: {} }
 }

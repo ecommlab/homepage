@@ -20,10 +20,10 @@ import { pick } from '../../lib/unterseitenInhalt'
 export type RechtZeile = { titel?: ReactNode; inhalt: ReactNode }
 type Aktiv = 'impressum' | 'datenschutz' | 'agb'
 
-const REITER: { key: Aktiv; href: string; label: { de: string; en: string } }[] = [
-  { key: 'impressum', href: '/impressum', label: { de: 'Impressum', en: 'Legal notice' } },
-  { key: 'datenschutz', href: '/datenschutzbestimmungen', label: { de: 'Datenschutz', en: 'Privacy' } },
-  { key: 'agb', href: '/nutzungsbedingungen', label: { de: 'AGB', en: 'Terms' } },
+const REITER: { key: Aktiv; href: string; label: { de: string; en: string; bg: string } }[] = [
+  { key: 'impressum', href: '/impressum', label: { de: 'Impressum', en: 'Legal notice', bg: 'Импресум' } },
+  { key: 'datenschutz', href: '/datenschutzbestimmungen', label: { de: 'Datenschutz', en: 'Privacy', bg: 'Лични данни' } },
+  { key: 'agb', href: '/nutzungsbedingungen', label: { de: 'AGB', en: 'Terms', bg: 'Общи условия' } },
 ]
 
 export function RechtSeite({ aktiv, zeilen, lang = false }: { aktiv: Aktiv; zeilen: RechtZeile[]; /** lange Texte (Datenschutz, AGB): mobil Titel 18 / Text 16 px */ lang?: boolean }) {
@@ -40,7 +40,7 @@ export function RechtSeite({ aktiv, zeilen, lang = false }: { aktiv: Aktiv; zeil
       hero={(feldRef) => (
         <>
           <HeroRubrik hell style={{ animation: 'c2-fade 300ms ease-out 180ms both' }}>
-            {pick(locale, { de: 'Rechtliches', en: 'Legal' })}
+            {pick(locale, { de: 'Rechtliches', en: 'Legal', bg: 'Правна информация' })}
           </HeroRubrik>
           <SchaerfeTitel
             id="c2-h1"
@@ -52,7 +52,7 @@ export function RechtSeite({ aktiv, zeilen, lang = false }: { aktiv: Aktiv; zeil
       )}
     >
       <div className="px-[24px] pb-[56px] pt-[32px] lg:px-[80px] lg:py-[120px]">
-        <nav aria-label={pick(locale, { de: 'Rechtliches', en: 'Legal' })} className="c2-motion relative flex flex-wrap gap-[8px] lg:-mb-[1.5px] lg:flex-nowrap lg:pl-[36px]">
+        <nav aria-label={pick(locale, { de: 'Rechtliches', en: 'Legal', bg: 'Правна информация' })} className="c2-motion relative flex flex-wrap gap-[8px] lg:-mb-[1.5px] lg:flex-nowrap lg:pl-[36px]">
           {REITER.map((r) => {
             const ist = r.key === aktiv
             const y = ist ? 0 : hover === r.key ? 3 : 6

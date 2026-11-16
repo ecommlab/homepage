@@ -18,6 +18,17 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
+## Sprachen
+
+Deutsch (Standard, ohne Präfix), Englisch (`/en`) und Bulgarisch (`/bg`) – `next.config.js → i18n`, Kern in `lib/i18n.ts`.
+
+- Jede Textstelle trägt alle drei Fassungen: `{ de, en, bg }` in `lib/*.ts`, `tr(locale, de, en, bg)` in Seiten. Fehlt eine, scheitert `npx tsc --noEmit`.
+- Startseite: ein Block je Sprache in `lib/startseiteInhalt.ts`.
+- Umschalter „DE · EN · BG“: `components/c2/Sprachwahl.tsx` (Kopf, Unterseiten, Mobilmenü).
+- Neue Sprache: `appLocales` + `sprachen` in `lib/i18n.ts`, `locales` in `next.config.js`, Texte ergänzen (der Typcheck zeigt jede Lücke), `public/sitemap.xml`.
+- Bulgarisch: Kundenansprache «Вие», Karriere «ти». Titelzeilen (`…Zeilen`) sind am Desktop einzeilig – nach Textänderungen bei 1024 px und 360 px ansehen; Kyrillisch läuft breiter als Latein.
+- Die kyrillische Schriftdatei wird nur auf `/bg` vorgeladen (`lib/kyrillischeSchrift.ts`).
+
 ## Deployment
 
 Default target is **ecommlab-cloud** (Hetzner CloudPanel, User `ecomde`). GCP is a standby option.

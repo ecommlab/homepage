@@ -1,4 +1,6 @@
+import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
+import { normalizeLocale, tr } from '../lib/i18n'
 
 type Props = {
   /**
@@ -103,6 +105,8 @@ export function BackToTopButton({ showAfter = 700 }: Props) {
     }
   }, [showAfter])
 
+  const locale = normalizeLocale(useRouter().locale)
+
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     e.stopPropagation()
@@ -117,8 +121,8 @@ export function BackToTopButton({ showAfter = 700 }: Props) {
       href="#page-top"
       onClick={handleClick}
       className="fixed bottom-6 right-6 z-[2147483647] inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-zinc-200 bg-white/90 text-zinc-900 shadow-lg backdrop-blur transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 pointer-events-auto dark:border-zinc-800 dark:bg-zinc-950/80 dark:text-zinc-50 dark:hover:bg-zinc-950"
-      aria-label="Nach oben scrollen"
-      title="Nach oben"
+      aria-label={tr(locale, 'Nach oben scrollen', 'Scroll to top', 'Към началото на страницата')}
+      title={tr(locale, 'Nach oben', 'Back to top', 'Нагоре')}
     >
       <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5 pointer-events-none">
         <path

@@ -6,11 +6,12 @@ import { SeitenRahmen } from './c2/SeitenRahmen'
 import { Signalregister } from './c2/Signalregister'
 import { Fliesstext, TitelWort, satz } from '../lib/c2Text'
 import { normalizeLocale } from '../lib/i18n'
+import type { AppLocale } from '../lib/i18n'
 import type { JobPosting, JobSection } from '../lib/jobs'
 import { karriere as t, pick } from '../lib/unterseitenInhalt'
 
 /** Punkte bzw. Absätze eines Stellenabschnitts (Desktop 18 px zweispaltig, mobil 16 px einspaltig) */
-function Liste({ s, gross, locale }: { s: JobSection; gross: boolean; locale: 'de' | 'en' }) {
+function Liste({ s, gross, locale }: { s: JobSection; gross: boolean; locale: AppLocale }) {
   return (
     s.type === 'bullets' ? (
       <ul className={`m-0 list-none p-0 ${gross ? 'text-[18px] leading-[1.5] [column-count:2] [column-gap:24px]' : 'flex flex-col gap-[10px] text-[16px] leading-[1.5]'}`}>

@@ -17,6 +17,7 @@ export default function Home() {
             locale,
             'Wir helfen Unternehmen, ihr E-Commerce-Potenzial zu erschließen – Strategie, Umsetzung und Wachstum.',
             'We help companies unlock their e-commerce potential — strategy, delivery, and growth.',
+            'Помагаме на компаниите да разгърнат потенциала си в електронната търговия – стратегия, реализация и растеж.',
           )}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

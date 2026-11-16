@@ -22,21 +22,21 @@ export function SiteFooter() {
           </p>
           <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
             <Link className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white" href="/impressum" scroll={true}>
-              {tr(locale, 'Impressum', 'Legal notice')}
+              {tr(locale, 'Impressum', 'Legal notice', 'Импресум')}
             </Link>
             <Link
               className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
               href="/nutzungsbedingungen"
               scroll={true}
             >
-              {tr(locale, 'AGBs', 'Terms')}
+              {tr(locale, 'AGBs', 'Terms', 'Общи условия')}
             </Link>
             <Link
               className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
               href="/datenschutzbestimmungen"
               scroll={true}
             >
-              {tr(locale, 'Datenschutz', 'Privacy')}
+              {tr(locale, 'Datenschutz', 'Privacy', 'Поверителност')}
             </Link>
             <a
               className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
@@ -48,7 +48,7 @@ export function SiteFooter() {
                 else api?.renew?.()
               }}
             >
-              {tr(locale, 'Cookie-Einstellungen', 'Cookie settings')}
+              {tr(locale, 'Cookie-Einstellungen', 'Cookie settings', 'Настройки за бисквитки')}
             </a>
             <a
               className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"

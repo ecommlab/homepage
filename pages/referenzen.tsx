@@ -10,13 +10,14 @@ export default function Referenzen() {
   return (
     <>
       <Head>
-        <title>{tr(locale, 'REFERENZEN – Ecommlab', 'Projects – Ecommlab')}</title>
+        <title>{tr(locale, 'REFERENZEN – Ecommlab', 'Projects – Ecommlab', 'Референции – Ecommlab')}</title>
         <meta
           name="description"
           content={tr(
             locale,
             'Ausgewählte Projekte und Case Studies, die wir gemeinsam mit unseren Kunden umgesetzt haben.',
             'Selected projects and case studies we delivered together with our clients.',
+            'Избрани проекти и казуси, които реализирахме заедно с нашите клиенти.',
           )}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

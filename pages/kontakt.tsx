@@ -10,13 +10,14 @@ export default function Kontakt() {
   return (
     <>
       <Head>
-        <title>{`${tr(locale, 'Kontakt', 'Contact')} – Ecommlab`}</title>
+        <title>{`${tr(locale, 'Kontakt', 'Contact', 'Контакт')} – Ecommlab`}</title>
         <meta
           name="description"
           content={tr(
             locale,
             'Sie wollen ein neues Projekt starten, in unser Team kommen oder nur „Hi“ sagen? Wir freuen uns auf Ihre Nachricht.',
             'Want to start a new project, join our team, or just say hi? We look forward to your message.',
+            'Искате да започнете нов проект, да станете част от екипа ни или просто да кажете „Здрасти“? Ще се радваме да ни пишете.',
           )}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

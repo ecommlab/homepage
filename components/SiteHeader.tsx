@@ -77,7 +77,7 @@ export function SiteHeader() {
           <Link
             href="/ecommlab"
             className="inline-flex items-center"
-            aria-label={tr(locale, 'Ecommlab Seite', 'Ecommlab page')}
+            aria-label={tr(locale, 'Ecommlab Seite', 'Ecommlab page', 'Страница на Ecommlab')}
           >
             <span className="sr-only">ECOMMLAB</span>
             <Image
@@ -104,7 +104,7 @@ export function SiteHeader() {
                 'text-base text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white'
               return (
                 <Link key={item.href} className={className} href={item.href}>
-                  {tr(locale, item.labelDe, item.labelEn)}
+                  {tr(locale, item.labelDe, item.labelEn, item.labelEn)}
                 </Link>
               )
             })}
@@ -113,11 +113,11 @@ export function SiteHeader() {
               type="button"
               onClick={toggleTheme}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white/70 text-zinc-900 transition hover:bg-white dark:border-zinc-800 dark:bg-zinc-950/50 dark:text-zinc-50 dark:hover:bg-zinc-950"
-              aria-label={theme === 'dark' ? tr(locale, 'Hellmodus aktivieren', 'Switch to light mode') : tr(locale, 'Dunkelmodus aktivieren', 'Switch to dark mode')}
-              title={theme === 'dark' ? tr(locale, 'Hellmodus', 'Light mode') : tr(locale, 'Dunkelmodus', 'Dark mode')}
+              aria-label={theme === 'dark' ? tr(locale, 'Hellmodus aktivieren', 'Switch to light mode', 'Включване на светъл режим') : tr(locale, 'Dunkelmodus aktivieren', 'Switch to dark mode', 'Включване на тъмен режим')}
+              title={theme === 'dark' ? tr(locale, 'Hellmodus', 'Light mode', 'Светъл режим') : tr(locale, 'Dunkelmodus', 'Dark mode', 'Тъмен режим')}
             >
               <span className="sr-only">
-                {theme === 'dark' ? tr(locale, 'Hellmodus', 'Light mode') : tr(locale, 'Dunkelmodus', 'Dark mode')}
+                {theme === 'dark' ? tr(locale, 'Hellmodus', 'Light mode', 'Светъл режим') : tr(locale, 'Dunkelmodus', 'Dark mode', 'Тъмен режим')}
               </span>
               <ThemeIcon mode={theme} />
             </button>
@@ -155,12 +155,12 @@ export function SiteHeader() {
           <button
             type="button"
             className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white/80 text-zinc-900 shadow-sm backdrop-blur transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:border-zinc-800 dark:bg-zinc-950/70 dark:text-zinc-50 dark:hover:bg-zinc-950 md:hidden"
-            aria-label={open ? tr(locale, 'Navigation schließen', 'Close navigation') : tr(locale, 'Navigation öffnen', 'Open navigation')}
+            aria-label={open ? tr(locale, 'Navigation schließen', 'Close navigation', 'Затваряне на навигацията') : tr(locale, 'Navigation öffnen', 'Open navigation', 'Отваряне на навигацията')}
             aria-expanded={open}
             aria-controls={panelId}
             onClick={() => setOpen((v) => !v)}
           >
-            <span className="sr-only">{open ? tr(locale, 'Schließen', 'Close') : tr(locale, 'Menü', 'Menu')}</span>
+            <span className="sr-only">{open ? tr(locale, 'Schließen', 'Close', 'Затвори') : tr(locale, 'Menü', 'Menu', 'Меню')}</span>
             <span aria-hidden="true" className="relative block h-5 w-6">
               <span
                 className={[
@@ -207,18 +207,18 @@ export function SiteHeader() {
         >
           <div className="flex items-center justify-between">
             <div className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-              {tr(locale, 'Navigation', 'Navigation')}
+              {tr(locale, 'Navigation', 'Navigation', 'Навигация')}
             </div>
             <button
               type="button"
               className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 text-base font-semibold text-zinc-900 shadow-sm transition hover:bg-zinc-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-zinc-900"
               onClick={() => setOpen(false)}
             >
-              {tr(locale, 'Schließen', 'Close')}
+              {tr(locale, 'Schließen', 'Close', 'Затвори')}
             </button>
           </div>
 
-          <nav className="mt-6 grid gap-1" aria-label={tr(locale, 'Mobile Navigation', 'Mobile navigation')}>
+          <nav className="mt-6 grid gap-1" aria-label={tr(locale, 'Mobile Navigation', 'Mobile navigation', 'Мобилна навигация')}>
             {nav.map((item) => {
               const className =
                 'rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 hover:bg-zinc-50 dark:text-zinc-50 dark:hover:bg-zinc-900'
@@ -230,7 +230,7 @@ export function SiteHeader() {
                   href={item.href}
                   onClick={() => setOpen(false)}
                 >
-                  {tr(locale, item.labelDe, item.labelEn)}
+                  {tr(locale, item.labelDe, item.labelEn, item.labelEn)}
                 </Link>
               )
             })}
@@ -238,7 +238,7 @@ export function SiteHeader() {
 
           <div className="mt-6 flex items-center justify-between gap-3 border-t border-zinc-200 pt-6 dark:border-zinc-800">
             <div className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
-              {tr(locale, 'Sprache', 'Language')}
+              {tr(locale, 'Sprache', 'Language', 'Език')}
             </div>
             <div className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white p-1 text-sm dark:border-zinc-800 dark:bg-zinc-950">
               <Link
@@ -274,7 +274,7 @@ export function SiteHeader() {
 
           <div className="mt-6 flex items-center justify-between gap-3 border-t border-zinc-200 pt-6 dark:border-zinc-800">
             <div className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
-              {tr(locale, 'Darstellung', 'Appearance')}
+              {tr(locale, 'Darstellung', 'Appearance', 'Изглед')}
             </div>
             <button
               type="button"
@@ -282,14 +282,14 @@ export function SiteHeader() {
               className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-zinc-900"
             >
               <ThemeIcon mode={theme} />
-              {theme === 'dark' ? tr(locale, 'Hell', 'Light') : tr(locale, 'Dunkel', 'Dark')}
+              {theme === 'dark' ? tr(locale, 'Hell', 'Light', 'Светъл') : tr(locale, 'Dunkel', 'Dark', 'Тъмен')}
             </button>
           </div>
 
           <div className="mt-6 border-t border-zinc-200 pt-6 text-sm leading-6 text-zinc-600 dark:border-zinc-800 dark:text-zinc-300">
-            {tr(locale, 'Tipp: Mit ', 'Tip: Press ')}
+            {tr(locale, 'Tipp: Mit ', 'Tip: Press ', 'Съвет: с ')}
             <kbd className="rounded border px-1">Esc</kbd>
-            {tr(locale, ' kannst du das Menü schließen.', ' to close the menu.')}
+            {tr(locale, ' kannst du das Menü schließen.', ' to close the menu.', ' можете да затворите менюто.')}
           </div>
         </div>
       </div>
