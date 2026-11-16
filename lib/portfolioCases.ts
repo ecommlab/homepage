@@ -11,10 +11,11 @@ export type PortfolioCase = PortfolioItem & {
   beforeKeyfactsImageAlt?: string
   beforeKeyfactsExtraImages?: readonly { src: string; alt?: string }[]
   meta: {
-    service?: string
+    /** Leistung und Ort je Sprache – Ortsnamen im Englischen/Bulgarischen in der dort üblichen Form */
+    service?: { de: string; en: string; bg: string }
     technology?: string
     year?: string
-    location: string
+    location: { de: string; en: string; bg: string }
     clientName: string
     clientUrl?: string
     date: string
@@ -63,10 +64,10 @@ export const portfolioCases: readonly PortfolioCase[] = [
       },
     ],
     meta: {
-      service: 'System Integration',
+      service: { de: 'System Integration', en: 'System Integration', bg: 'Системна интеграция' },
       technology: 'Magento 2',
       year: '2019',
-      location: 'Wien, Salzburg, Graz, München',
+      location: { de: 'Wien, Salzburg, Graz, München', en: 'Vienna, Salzburg, Graz, Munich', bg: 'Виена, Залцбург, Грац, Мюнхен' },
       clientName: 'Newone GmbH',
       clientUrl: 'https://www.newone-shop.com/',
       date: 'September 1, 2019',
@@ -111,10 +112,10 @@ export const portfolioCases: readonly PortfolioCase[] = [
       },
     ],
     meta: {
-      service: 'System Integration',
+      service: { de: 'System Integration', en: 'System Integration', bg: 'Системна интеграция' },
       technology: 'Shopware',
       year: '2023',
-      location: 'Bietigheim-Bissingen',
+      location: { de: 'Bietigheim-Bissingen', en: 'Bietigheim-Bissingen', bg: 'Битигхайм-Бисинген' },
       clientName: 'Bär GmbH',
       clientUrl: 'http://www.baer-schuhe.de/',
       date: 'November 19, 2023',
@@ -153,10 +154,10 @@ export const portfolioCases: readonly PortfolioCase[] = [
       },
     ],
     meta: {
-      service: 'System Integration',
+      service: { de: 'System Integration', en: 'System Integration', bg: 'Системна интеграция' },
       technology: 'Magento 2 Commerce',
       year: '2023',
-      location: 'Brilon',
+      location: { de: 'Brilon', en: 'Brilon', bg: 'Брилон' },
       clientName: 'Liquid-Life GmbH',
       clientUrl: 'http://www.liquid-life.de/',
       date: 'November 21, 2023',
@@ -195,10 +196,10 @@ export const portfolioCases: readonly PortfolioCase[] = [
       },
     ],
     meta: {
-      service: 'System Integration',
+      service: { de: 'System Integration', en: 'System Integration', bg: 'Системна интеграция' },
       technology: 'OXID',
       year: '2023',
-      location: 'Neufahrn',
+      location: { de: 'Neufahrn', en: 'Neufahrn', bg: 'Нойфарн' },
       clientName: 'Hinke GmbH',
       clientUrl: 'https://www.pfundskerl-xxl.de/',
       date: 'November 21, 2023',
@@ -228,10 +229,10 @@ export const portfolioCases: readonly PortfolioCase[] = [
       },
     ],
     meta: {
-      service: 'System Integration',
+      service: { de: 'System Integration', en: 'System Integration', bg: 'Системна интеграция' },
       technology: 'Shopware',
       year: '2023',
-      location: 'Allmannshofen',
+      location: { de: 'Allmannshofen', en: 'Allmannshofen', bg: 'Алмансхофен' },
       clientName: 'Kaipara GmbH',
       clientUrl: 'https://kaipara.de/',
       date: 'November 21, 2023',
@@ -272,10 +273,10 @@ export const portfolioCases: readonly PortfolioCase[] = [
       },
     ],
     meta: {
-      service: 'System Integration',
+      service: { de: 'System Integration', en: 'System Integration', bg: 'Системна интеграция' },
       technology: 'OXID',
       year: '2023',
-      location: 'Hamburg, Nützen, Halstenbek',
+      location: { de: 'Hamburg, Nützen, Halstenbek', en: 'Hamburg, Nützen, Halstenbek', bg: 'Хамбург, Нютцен, Халстенбек' },
       clientName: 'Riess-ambiente.de GmbH',
       clientUrl: 'http://www.riess-ambiente.net/',
       date: 'November 21, 2023',

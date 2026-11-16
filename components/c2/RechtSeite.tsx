@@ -46,7 +46,7 @@ export function RechtSeite({ aktiv, zeilen, lang = false }: { aktiv: Aktiv; zeil
             id="c2-h1"
             areaRef={feldRef}
             zeilen={[titel]}
-            className="mt-[20px] text-[56px] leading-[0.96] tracking-[-0.03em] lg:mt-[28px] lg:text-[length:min(112px,7.778vw)]"
+            className="mt-[20px] text-[length:min(56px,15vw)] leading-[0.96] tracking-[-0.03em] lg:mt-[28px] lg:text-[length:min(112px,7.778vw)]"
           />
         </>
       )}

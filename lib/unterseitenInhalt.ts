@@ -26,7 +26,7 @@ export const gemeinsam = {
   mehrUmsatzZeilen: {
     de: ['Mehr Umsatz, bessere', 'Kundenerlebnisse,', 'reibungslose Prozesse –', 'mit Ecommlab.'],
     en: ['More revenue, better', 'customer experiences,', 'smoother operations –', 'with Ecommlab.'],
-    bg: ['Повече приходи, по-добри', 'клиентски изживявания,', 'безпроблемни процеси –', 'с Ecommlab.'],
+    bg: ['Повече приходи,', 'по-добри изживявания,', 'безпроблемни процеси –', 'с Ecommlab.'],
   },
   mehrUmsatzText: {
     de: 'Von der Optimierung bis zur Skalierung – wir machen Ihr E-Commerce fit für die Zukunft.',
@@ -70,12 +70,12 @@ export const leistungen = {
   gruppen: [
     {
       titel: { de: 'Digitale Präsenz & Entwicklung', en: 'Digital presence & development', bg: 'Дигитално присъствие и разработка' },
-      titelZeilen: { de: ['Digitale Präsenz', '& Entwicklung'], en: ['Digital presence', '& development'], bg: ['Дигитално присъствие', 'и разработка'] },
+      titelZeilen: { de: ['Digitale Präsenz', '& Entwicklung'], en: ['Digital presence', '& development'], bg: ['Дигитално', 'присъствие', 'и разработка'] },
       slugs: ['e-commerce', 'web-development', 'platform-integration', 'prerformance-boosting'],
     },
     {
       titel: { de: 'User Experience & Design', en: 'User experience & design', bg: 'Потребителско изживяване и дизайн' },
-      titelZeilen: { de: ['User Experience', '& Design'], en: ['User experience', '& design'], bg: ['Потребителско изживяване', 'и дизайн'] },
+      titelZeilen: { de: ['User Experience', '& Design'], en: ['User experience', '& design'], bg: ['Потребителско', 'изживяване', 'и дизайн'] },
       slugs: ['ux-design-usability'],
     },
     {
@@ -101,7 +101,7 @@ export const leistungen = {
     bg: 'Внимателният избор на партньори, системи и инструменти в електронната търговия позволява на компаниите да останат гъвкави, конкурентоспособни и ориентирани към клиента – решаващо за дългосрочния успех на бързо развиващ се пазар.',
   },
   erfahrungRubrik: { de: 'Erfahrung', en: 'Experience', bg: 'Опит' },
-  erfahrungZeilen: { de: ['Wir verstehen Enterprise', 'und Mittelstand'], en: ['We understand', 'enterprise & SMB'], bg: ['Разбираме големите компании', 'и средния бизнес'] },
+  erfahrungZeilen: { de: ['Wir verstehen Enterprise', 'und Mittelstand'], en: ['We understand', 'enterprise & SMB'], bg: ['Разбираме големите', 'и средните компании'] },
   erfahrungText: {
     de: 'Wir haben mit zahlreichen Enterprise- und Mittelstand-Kunden gearbeitet, für die wir skalierbare Lösungen umgesetzt haben. Diese Skills setzen wir bei all unseren Projekten ein.',
     en: 'We’ve worked with many enterprise and SMB clients and delivered scalable solutions. We bring these skills to every single project.',
@@ -227,7 +227,7 @@ export const kontaktSeite = {
   titelZeilen: {
     de: ['Sie wollen ein neues', 'Projekt starten, in unser', 'Team kommen oder nur', '„Hi“ sagen?'],
     en: ['Want to start', 'a new project, join', 'our team, or just', 'say hi?'],
-    bg: ['Искате да започнете нов', 'проект, да станете част', 'от екипа ни или просто', 'да кажете „Здрасти“?'],
+    bg: ['Искате да започнете', 'нов проект, да сте', 'част от екипа ни или', 'просто да кажете', '„Здрасти“?'],
   },
   lead: { de: 'Wir freuen uns auf Ihre Nachricht.', en: 'We look forward to hearing from you.', bg: 'Ще се радваме да ни пишете.' },
   direkt: { de: 'Direkter Kontakt', en: 'Direct contact', bg: 'Директен контакт' },

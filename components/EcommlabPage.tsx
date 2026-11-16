@@ -60,7 +60,7 @@ function Zeilen({ zeilen, nowrap }: { zeilen: readonly string[]; nowrap?: string
           inhalt = (
             <>
               {vor}
-              <span className="whitespace-nowrap">{nowrap}</span>
+              <span className="min-[360px]:whitespace-nowrap">{nowrap}</span>
               {nach}
             </>
           )
@@ -279,7 +279,7 @@ export function EcommlabPage() {
                       <span className="text-[15px] leading-[1.45] text-[color:var(--c2-muted)] lg:col-span-5 lg:col-start-7 lg:text-balance lg:text-[18px] lg:leading-[1.5] lg:text-[color:var(--c2-ink)]">
                         {k.punkte.map((p, i) => (
                           <Fragment key={p}>
-                            <span className="whitespace-nowrap">
+                            <span className="min-[390px]:whitespace-nowrap">
                               {p}
                               {i < k.punkte.length - 1 ? ' ·' : ''}
                             </span>

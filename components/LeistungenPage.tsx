@@ -59,7 +59,7 @@ export function LeistungenPage() {
         <div className="lg:mt-[56px] lg:border-b-2" style={{ borderColor: 'var(--c2-ink)' }}>
           {t.gruppen.map((g) => (
             <div key={g.titel.de} className="mt-[28px] flex flex-col lg:mt-0 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-[24px] lg:border-t-2" style={{ borderColor: 'var(--c2-ink)' }}>
-              <h3 className="m-0 mb-[8px] text-[14px] font-semibold leading-[1.3] text-[color:var(--c2-muted)] lg:col-span-4 lg:mb-0 lg:whitespace-nowrap lg:pb-[24px] lg:pt-[28px] lg:text-[36px] lg:font-bold lg:leading-[1.05] lg:tracking-[-0.015em] lg:text-[color:var(--c2-ink)] lg:[font-variation-settings:'SHRP'_50]">
+              <h3 className="m-0 mb-[8px] text-[14px] font-semibold leading-[1.3] text-[color:var(--c2-muted)] lg:col-span-4 lg:mb-0 lg:whitespace-nowrap lg:pb-[24px] lg:pt-[28px] lg:text-[length:min(36px,2.5vw)] lg:font-bold lg:leading-[1.05] lg:tracking-[-0.015em] lg:text-[color:var(--c2-ink)] lg:[font-variation-settings:'SHRP'_50]">
                 <span className="lg:hidden">{pick(locale, g.titel)}</span>
                 <span className="hidden lg:inline">
                   <Zeilen zeilen={pickZ(locale, g.titelZeilen)} />

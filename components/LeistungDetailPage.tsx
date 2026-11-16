@@ -82,7 +82,7 @@ export function LeistungDetailPage({ leistung }: { leistung: LeistungDetail }) {
                   >
                     {i + 1}
                   </span>
-                  <h2 className={`${H_HALB} text-balance text-[21px] leading-[1.25] lg:max-w-[460px] lg:text-[28px] lg:leading-[1.2] lg:tracking-[-0.01em]`}>{satz(s.title[locale])}</h2>
+                  <h2 className={`${H_HALB} hyphens-auto text-balance break-words text-[21px] leading-[1.25] lg:max-w-[460px] lg:text-[28px] lg:leading-[1.2] lg:tracking-[-0.01em]`}>{satz(s.title[locale])}</h2>
                 </div>
                 <p className="m-0 text-pretty text-[16px] leading-[1.55] lg:col-span-6 lg:col-start-7 lg:max-w-[60ch] lg:text-[19px]">
                   <Fliesstext text={s.body[locale]} />

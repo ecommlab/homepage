@@ -145,7 +145,7 @@ html.dark {
 @media (hover: hover) and (pointer: fine) { .c2-riso-toggle { display: none !important; } }
 
 /* Hero-Treppe: Schriftgröße, Stufe (Anteil der Schriftgröße), Grundeinzug, Auftrittsweg */
-.c2-treppe { --c2-hero-fs: 60px; --c2-treppe-stufe: .47em; --c2-treppe-basis: 0px; --c2-rise-x: -16px; }
+.c2-treppe { --c2-hero-fs: min(60px, 15.4vw); --c2-treppe-stufe: .47em; --c2-treppe-basis: 0px; --c2-rise-x: -16px; }
 @media (min-width: 1024px) { .c2-treppe { --c2-hero-fs: clamp(120px, 12.8vw, 184px); --c2-treppe-stufe: 1.18em; --c2-treppe-basis: 64px; --c2-rise-x: -24px; } }
 
 /* Leistungszeilen (Register): Hover-Grund + Pfeil schiebt 4 px */

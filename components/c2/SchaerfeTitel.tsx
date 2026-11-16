@@ -92,7 +92,7 @@ export function SchaerfeTitel({
 
   return (
     // hyphens-auto: mobil dürfen sehr lange Wörter („benutzerfreundliche“) getrennt werden (html lang kommt aus next i18n)
-    <Tag id={id} className={`c2-motion m-0 font-extrabold hyphens-auto [font-variation-settings:'SHRP'_100] lg:hyphens-manual ${frei ? 'text-balance' : 'lg:whitespace-nowrap'} ${className}`}>
+    <Tag id={id} className={`c2-motion m-0 break-words font-extrabold hyphens-auto [font-variation-settings:'SHRP'_100] lg:break-normal lg:hyphens-manual ${frei ? 'text-balance' : 'lg:whitespace-nowrap'} ${className}`}>
       {zeilen.map((z, i) => (
         <span key={i}>
           <span

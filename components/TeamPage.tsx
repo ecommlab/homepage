@@ -154,7 +154,7 @@ export function TeamPage() {
                   {m.name}
                   <span className="sr-only">, </span>
                 </span>
-                <span className="text-[14px] leading-[1.3] text-[color:var(--c2-muted)] lg:col-span-3 lg:whitespace-nowrap lg:text-[17px] lg:font-medium lg:leading-[1.4]">{m.role[locale]}</span>
+                <span className="text-[14px] leading-[1.3] text-[color:var(--c2-muted)] lg:col-span-3 lg:text-[17px] lg:font-medium lg:leading-[1.4] xl:whitespace-nowrap">{m.role[locale]}</span>
               </span>
             </li>
           ))}

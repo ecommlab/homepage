@@ -38,10 +38,10 @@ export function PortfolioDetailPage({ slug }: { slug: string }) {
   const altVon = (src: string, fallback: string) => (c2BildAlt[src] ? pick(locale, c2BildAlt[src]) : c2Kachel[item.slug] && src === c2Kachel[item.slug].src ? pick(locale, c2Kachel[item.slug].alt) : fallback)
   const kachel = c2Kachel[item.slug]
   const eckdaten = [
-    { dt: t.service, dd: item.meta.service },
+    { dt: t.service, dd: item.meta.service?.[locale] },
     { dt: t.technologie, dd: item.meta.technology },
     { dt: t.datum, dd: item.meta.year },
-    { dt: t.ort, dd: item.meta.location },
+    { dt: t.ort, dd: item.meta.location[locale] },
   ].filter((e) => e.dd)
 
   return (
@@ -200,7 +200,7 @@ function Keyfact({ fakt, erst, locale }: { fakt: KeyFactRow; erst: boolean; loca
                 –
               </span>
               <span aria-hidden className="mt-[10px] hidden h-[6px] w-[6px] flex-none rounded-full lg:block" style={{ background: 'var(--c2-ink)' }} />
-              <span className="lg:text-balance">
+              <span className="min-w-0 hyphens-auto break-words lg:text-balance">
                 <Fliesstext text={satz(it[locale])} fett />
               </span>
             </li>

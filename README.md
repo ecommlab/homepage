@@ -26,7 +26,7 @@ Deutsch (Standard, ohne Präfix), Englisch (`/en`) und Bulgarisch (`/bg`) – `n
 - Startseite: ein Block je Sprache in `lib/startseiteInhalt.ts`.
 - Umschalter „DE · EN · BG“: `components/c2/Sprachwahl.tsx` (Kopf, Unterseiten, Mobilmenü).
 - Neue Sprache: `appLocales` + `sprachen` in `lib/i18n.ts`, `locales` in `next.config.js`, Texte ergänzen (der Typcheck zeigt jede Lücke), `public/sitemap.xml`.
-- Bulgarisch: Kundenansprache «Вие», Karriere «ти». Titelzeilen (`…Zeilen`) sind am Desktop einzeilig – nach Textänderungen bei 1024 px und 360 px ansehen; Kyrillisch läuft breiter als Latein.
+- Bulgarisch: Kundenansprache «Вие», Karriere «ти». Titelzeilen (`…Zeilen`) und Listentitel sind am Desktop einzeilig (`whitespace-nowrap`) und auf deutsche Wortlängen bemessen – Kyrillisch läuft rund ein Viertel breiter. Zu lange Zeilen ragen dann in die Nachbarspalte oder unter das Formular, ohne dass etwas scrollt. Nach Textänderungen jede betroffene Seite bei 1024, 1440 und 360 px ansehen.
 - Die kyrillische Schriftdatei wird nur auf `/bg` vorgeladen (`lib/kyrillischeSchrift.ts`).
 
 ## Deployment

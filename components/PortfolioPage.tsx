@@ -67,7 +67,7 @@ export function PortfolioPage() {
         <div className="mt-[24px] flex flex-col gap-[28px] lg:mt-0 lg:grid lg:grid-cols-2 lg:gap-x-[24px] lg:gap-y-[56px]">
           {portfolioCases.map((c) => {
             const bild = c2Kachel[c.slug] ?? { src: c.imageSrc, alt: { de: c.title, en: c.title, bg: c.title } }
-            const meta = [c.meta.technology, c.meta.location].filter(Boolean).join(' · ')
+            const meta = [c.meta.technology, c.meta.location[locale]].filter(Boolean).join(' · ')
             return (
               <RisoKachel
                 key={c.slug}
