@@ -4,9 +4,6 @@
     <loc>https://ecommlab.io/</loc>
   </url>
   <url>
-    <loc>https://ecommlab.io/ecommlab</loc>
-  </url>
-  <url>
     <loc>https://ecommlab.io/kontakt</loc>
   </url>
   <url>
@@ -29,6 +26,9 @@
   </url>
   <url>
     <loc>https://ecommlab.io/impressum</loc>
+  </url>
+  <url>
+    <loc>https://ecommlab.io/nutzungsbedingungen</loc>
   </url>
   <url>
     <loc>https://ecommlab.io/leistungen</loc>
@@ -88,9 +88,6 @@
     <loc>https://ecommlab.io/en</loc>
   </url>
   <url>
-    <loc>https://ecommlab.io/en/ecommlab</loc>
-  </url>
-  <url>
     <loc>https://ecommlab.io/en/kontakt</loc>
   </url>
   <url>
@@ -113,6 +110,9 @@
   </url>
   <url>
     <loc>https://ecommlab.io/en/impressum</loc>
+  </url>
+  <url>
+    <loc>https://ecommlab.io/en/nutzungsbedingungen</loc>
   </url>
   <url>
     <loc>https://ecommlab.io/en/leistungen</loc>
@@ -172,9 +172,6 @@
     <loc>https://ecommlab.io/bg</loc>
   </url>
   <url>
-    <loc>https://ecommlab.io/bg/ecommlab</loc>
-  </url>
-  <url>
     <loc>https://ecommlab.io/bg/kontakt</loc>
   </url>
   <url>
@@ -197,6 +194,9 @@
   </url>
   <url>
     <loc>https://ecommlab.io/bg/impressum</loc>
+  </url>
+  <url>
+    <loc>https://ecommlab.io/bg/nutzungsbedingungen</loc>
   </url>
   <url>
     <loc>https://ecommlab.io/bg/leistungen</loc>
