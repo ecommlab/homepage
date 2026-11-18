@@ -3,15 +3,18 @@ import type { DocumentContext, DocumentInitialProps } from 'next/document'
 import { consentokRuntime, inlineSicher } from '../lib/consentokRuntime'
 import { normalizeLocale } from '../lib/i18n'
 import { kyrillischeSchriftdatei } from '../lib/kyrillischeSchrift'
+import { alsJsonLd, pfadOhneSprache, strukturierteDaten } from '../lib/strukturierteDaten'
 
-type Props = DocumentInitialProps & { consentokInline: string | null; kyrillisch: string | null }
+type Props = DocumentInitialProps & { consentokInline: string | null; kyrillisch: string | null; jsonLd: string }
 
 export default class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext): Promise<Props> {
     const initial = await Document.getInitialProps(ctx)
     const id = process.env.NEXT_PUBLIC_CONSENTOK_ID
     const kopie = id ? await consentokRuntime(id) : null
-    return { ...initial, consentokInline: kopie && inlineSicher(kopie.body) ? kopie.body : null, kyrillisch: ctx.locale === 'bg' ? kyrillischeSchriftdatei() : null }
+    // Strukturierte Daten nur hier, nicht in _app — Begründung in lib/strukturierteDaten.ts
+    const jsonLd = alsJsonLd(strukturierteDaten(pfadOhneSprache(ctx.asPath || '/'), normalizeLocale(ctx.locale), process.env.NEXT_PUBLIC_SITE_URL))
+    return { ...initial, consentokInline: kopie && inlineSicher(kopie.body) ? kopie.body : null, kyrillisch: ctx.locale === 'bg' ? kyrillischeSchriftdatei() : null, jsonLd }
   }
 
   render() {
@@ -25,6 +28,8 @@ export default class MyDocument extends Document<Props> {
         <Head>
           {/* Kyrillische Schrift nur auf /bg vorladen – Begründung in lib/kyrillischeSchrift.ts */}
           {this.props.kyrillisch ? <link rel="preload" as="font" type="font/woff2" crossOrigin="anonymous" href={this.props.kyrillisch} /> : null}
+
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: this.props.jsonLd }} />
 
           <script
             type="text/plain"

@@ -29,6 +29,18 @@ Deutsch (Standard, ohne Präfix), Englisch (`/en`) und Bulgarisch (`/bg`) – `n
 - Bulgarisch: Kundenansprache «Вие», Karriere «ти». Titelzeilen (`…Zeilen`) und Listentitel sind am Desktop einzeilig (`whitespace-nowrap`) und auf deutsche Wortlängen bemessen – Kyrillisch läuft rund ein Viertel breiter. Zu lange Zeilen ragen dann in die Nachbarspalte oder unter das Formular, ohne dass etwas scrollt. Nach Textänderungen jede betroffene Seite bei 1024, 1440 und 360 px ansehen.
 - Die kyrillische Schriftdatei wird nur auf `/bg` vorgeladen (`lib/kyrillischeSchrift.ts`).
 
+## Strukturierte Daten (JSON-LD)
+
+Jede Seite trägt in jeder Sprache einen schema.org-Graph – erzeugt in `lib/strukturierteDaten.ts`, ausgegeben in `pages/_document.tsx`.
+
+- Immer: `Organization` (Angaben wie im Impressum) und `WebSite`; dazu Seitenknoten und `BreadcrumbList`.
+- Startseite zusätzlich `FAQPage` aus `lib/startseiteInhalt.ts`, Leistungen `Service`, Referenzen `CreativeWork`, Team `Person`, Übersichten `ItemList`.
+- Alle Texte kommen aus denselben Inhaltsdateien wie die Anzeige – JSON-LD darf nichts behaupten, was nicht auf der Seite steht.
+- Bewusst kein `JobPosting`: Dafür fehlen Arbeitsort und Veröffentlichungsdatum in `lib/jobs.ts`.
+- Nicht in `_app` verlegen: Dort landen die Inhaltsdateien im JavaScript jeder Seite.
+- Neue Seite: Pfad in `seiteFuer()` ergänzen, sonst bekommt sie nur Organisation und Website.
+- Absolute URLs aus `NEXT_PUBLIC_SITE_URL` (Rückfall `https://ecommlab.io`).
+
 ## Deployment
 
 Default target is **ecommlab-cloud** (Hetzner CloudPanel, User `ecomde`). GCP is a standby option.
@@ -46,7 +58,7 @@ On GCP, runtime secrets live in Secret Manager (not in the image).
 
 ### Consentok + Google Analytics 4
 
-- `NEXT_PUBLIC_SITE_URL`: Public base URL (e.g. `https://ecommlab.io`) for canonical/hreflang links
+- `NEXT_PUBLIC_SITE_URL`: Public base URL (e.g. `https://ecommlab.io`) for canonical/hreflang links and JSON-LD
 - `NEXT_PUBLIC_CONSENTOK_ID`: Consentok site key
 - `NEXT_PUBLIC_GA4_MEASUREMENT_ID`: GA4 Measurement ID (e.g. `G-XXXXXXXXXX`)
 
